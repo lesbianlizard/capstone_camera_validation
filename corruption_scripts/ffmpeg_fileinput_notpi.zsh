@@ -8,7 +8,7 @@ noise_type=$5
 is_on_pi=$6
 is_raw_input=$7
 
-if [[ ! -z $is_on_pi ]]
+if [[ ! $is_on_pi -eq 0 ]]
 then
   ffmpeg_encode=(\
     -c:v h264_omx \
@@ -23,7 +23,7 @@ else
   )
 fi
 
-if [[ ! -z $is_raw_input ]]
+if [[ ! $is_raw_input -eq 0 ]]
 then
   raw_decode_args=(
     -f rawvideo \
