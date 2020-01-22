@@ -2,12 +2,12 @@
 
 import picamera
 
-vid_fmt = "h264"
-vid_filename = "picam_test." + vid_fmt
+vid_fmt = "yuv"
+#vid_filename = "picam_test." + vid_fmt
 vid_filename = "a_pipe"
 vid_bitrate = 17000000
 x = 1920
-y = 1072
+y = 1088
 
 cam = picamera.PiCamera()
 cam.resolution = (x, y)
