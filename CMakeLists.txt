@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( server1 )
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( server1 Distortion.hpp Distortion.cpp Freeze.hpp Freeze.cpp corruption.cpp)
+target_link_libraries( server1 ${OpenCV_LIBS}  )

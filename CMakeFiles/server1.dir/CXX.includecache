@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
+opencv2/opencv.hpp
+-
+string
+-
+
+/home/pi/Code/capstone_camera_validation/Freeze.hpp
+unistd.h
+-
+Distortion.hpp
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
+
+/home/pi/Code/capstone_camera_validation/corruption.cpp
+stdio.h
+-
+opencv2/opencv.hpp
+-
+iostream
+-
+unistd.h
+-
+stdio.h
+-
+Distortion.hpp
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
+Freeze.hpp
+/home/pi/Code/capstone_camera_validation/Freeze.hpp
+
