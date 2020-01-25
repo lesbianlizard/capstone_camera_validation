@@ -12,25 +12,13 @@ opencv2/opencv.hpp
 string
 -
 
-/home/pi/Code/capstone_camera_validation/Freeze.hpp
-unistd.h
--
-Distortion.hpp
-/home/pi/Code/capstone_camera_validation/Distortion.hpp
+/home/pi/Code/capstone_camera_validation/White.cpp
+White.hpp
+/home/pi/Code/capstone_camera_validation/White.hpp
 
-/home/pi/Code/capstone_camera_validation/corruption.cpp
-stdio.h
--
-opencv2/opencv.hpp
--
-iostream
--
+/home/pi/Code/capstone_camera_validation/White.hpp
 unistd.h
--
-stdio.h
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
-Freeze.hpp
-/home/pi/Code/capstone_camera_validation/Freeze.hpp
 

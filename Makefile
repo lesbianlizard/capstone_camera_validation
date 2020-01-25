@@ -177,6 +177,33 @@ Freeze.cpp.s:
 	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Freeze.cpp.s
 .PHONY : Freeze.cpp.s
 
+White.o: White.cpp.o
+
+.PHONY : White.o
+
+# target to build an object file
+White.cpp.o:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.o
+.PHONY : White.cpp.o
+
+White.i: White.cpp.i
+
+.PHONY : White.i
+
+# target to preprocess a source file
+White.cpp.i:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.i
+.PHONY : White.cpp.i
+
+White.s: White.cpp.s
+
+.PHONY : White.s
+
+# target to generate assembly for a file
+White.cpp.s:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.s
+.PHONY : White.cpp.s
+
 corruption.o: corruption.cpp.o
 
 .PHONY : corruption.o
@@ -219,6 +246,9 @@ help:
 	@echo "... Freeze.o"
 	@echo "... Freeze.i"
 	@echo "... Freeze.s"
+	@echo "... White.o"
+	@echo "... White.i"
+	@echo "... White.s"
 	@echo "... corruption.o"
 	@echo "... corruption.i"
 	@echo "... corruption.s"

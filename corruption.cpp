@@ -17,24 +17,30 @@
 #include <stdio.h> 
 #include "Distortion.hpp"
 #include "Freeze.hpp"
+#include "White.hpp"
 
-
-void setup(cv::VideoCapture &vid);
+void setup(cv::VideoCapture &vid, int &width, int &height);
 
 enum distortion{FREEZE, WHITE, SHIFT};
 
-int main(){
+int main()
+{
+    int width, height;
     cv::Mat frame; 
     std::string window = "window";
     Distortion* dis[3];
-    enum distortion type = FREEZE;
+    enum distortion type = WHITE;
     cv::VideoCapture vid(0); 
     
-    setup(vid);
+    setup(vid, width, height);
     
     Freeze freeze(3000, &vid, &frame, window);
+    White white(3000, &vid, &frame, window, 255, height, width); 
+
     cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
+    
     dis[0] = &freeze;
+    dis[1] = &white;
 
     while(1){
         dis[type]->run();
@@ -44,9 +50,9 @@ int main(){
 }
 
 
-void setup(cv::VideoCapture &vid)
+void setup(cv::VideoCapture &vid, int &width, int &height)
 {
-    int width, height, size_in;
+    int size_in;
     if(!vid.isOpened()){
         return;
     }

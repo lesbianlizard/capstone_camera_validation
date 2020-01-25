@@ -5,8 +5,6 @@ Freeze::Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string 
     Distortion(dur, vid, frame, window)
 {}
 
-Freeze::~Freeze() {}
-
 void Freeze::setPrev()
 {
     m_prevFrame = m_frame;
@@ -22,7 +20,6 @@ void Freeze::run()
         cv::imshow(m_window, *m_prevFrame);
         usleep(m_dur*1000); 
     }
-    else 
-        render();
+    render();
 }
 

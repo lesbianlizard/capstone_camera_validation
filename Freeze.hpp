@@ -8,7 +8,6 @@ class Freeze: public Distortion
 {
     public: 
         Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window);
-        virtual ~Freeze();
         void run(); 
 
     private:

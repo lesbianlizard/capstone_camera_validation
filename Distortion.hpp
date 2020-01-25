@@ -8,7 +8,6 @@ class Distortion
 {
     public: 
         Distortion(int dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window);
-        ~Distortion();
         virtual void run() = 0; 
         void setTime(int dur); 
 

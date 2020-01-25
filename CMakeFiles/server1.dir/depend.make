@@ -8,7 +8,12 @@ CMakeFiles/server1.dir/Freeze.cpp.o: Distortion.hpp
 CMakeFiles/server1.dir/Freeze.cpp.o: Freeze.cpp
 CMakeFiles/server1.dir/Freeze.cpp.o: Freeze.hpp
 
+CMakeFiles/server1.dir/White.cpp.o: Distortion.hpp
+CMakeFiles/server1.dir/White.cpp.o: White.cpp
+CMakeFiles/server1.dir/White.cpp.o: White.hpp
+
 CMakeFiles/server1.dir/corruption.cpp.o: Distortion.hpp
 CMakeFiles/server1.dir/corruption.cpp.o: Freeze.hpp
+CMakeFiles/server1.dir/corruption.cpp.o: White.hpp
 CMakeFiles/server1.dir/corruption.cpp.o: corruption.cpp
 
