@@ -1,13 +1,7 @@
 
-// CAMERA CODE
 /*************************************************
- * Freeze image program
- * AARON WALDER
- * press 'f' to freeze and follow by pressing a number 
- * 1-9 in order to freeze for that amount of time
- * press 'p' for FPS
- * Press 'w' to white screen, and press 'w' again
- * to leave white screen
+* Corruption Unit OPENCV Program
+* Contributors: Kamron Ebrahimi, Aaron Walder, Pu Huang
 ************************************************/
 
 #include <stdio.h>

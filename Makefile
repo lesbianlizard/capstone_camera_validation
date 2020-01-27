@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named server1
+# Target rules for targets named corrupt
 
 # Build rule for target.
-server1: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 server1
-.PHONY : server1
+corrupt: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 corrupt
+.PHONY : corrupt
 
 # fast build rule for target.
-server1/fast:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/build
-.PHONY : server1/fast
+corrupt/fast:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/build
+.PHONY : corrupt/fast
 
 Distortion.o: Distortion.cpp.o
 
@@ -129,7 +129,7 @@ Distortion.o: Distortion.cpp.o
 
 # target to build an object file
 Distortion.cpp.o:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Distortion.cpp.o
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.o
 .PHONY : Distortion.cpp.o
 
 Distortion.i: Distortion.cpp.i
@@ -138,7 +138,7 @@ Distortion.i: Distortion.cpp.i
 
 # target to preprocess a source file
 Distortion.cpp.i:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Distortion.cpp.i
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.i
 .PHONY : Distortion.cpp.i
 
 Distortion.s: Distortion.cpp.s
@@ -147,7 +147,7 @@ Distortion.s: Distortion.cpp.s
 
 # target to generate assembly for a file
 Distortion.cpp.s:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Distortion.cpp.s
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.s
 .PHONY : Distortion.cpp.s
 
 Freeze.o: Freeze.cpp.o
@@ -156,7 +156,7 @@ Freeze.o: Freeze.cpp.o
 
 # target to build an object file
 Freeze.cpp.o:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Freeze.cpp.o
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.o
 .PHONY : Freeze.cpp.o
 
 Freeze.i: Freeze.cpp.i
@@ -165,7 +165,7 @@ Freeze.i: Freeze.cpp.i
 
 # target to preprocess a source file
 Freeze.cpp.i:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Freeze.cpp.i
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.i
 .PHONY : Freeze.cpp.i
 
 Freeze.s: Freeze.cpp.s
@@ -174,7 +174,7 @@ Freeze.s: Freeze.cpp.s
 
 # target to generate assembly for a file
 Freeze.cpp.s:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Freeze.cpp.s
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.s
 .PHONY : Freeze.cpp.s
 
 Translate.o: Translate.cpp.o
@@ -183,7 +183,7 @@ Translate.o: Translate.cpp.o
 
 # target to build an object file
 Translate.cpp.o:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.o
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.o
 .PHONY : Translate.cpp.o
 
 Translate.i: Translate.cpp.i
@@ -192,7 +192,7 @@ Translate.i: Translate.cpp.i
 
 # target to preprocess a source file
 Translate.cpp.i:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.i
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.i
 .PHONY : Translate.cpp.i
 
 Translate.s: Translate.cpp.s
@@ -201,7 +201,7 @@ Translate.s: Translate.cpp.s
 
 # target to generate assembly for a file
 Translate.cpp.s:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.s
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.s
 .PHONY : Translate.cpp.s
 
 White.o: White.cpp.o
@@ -210,7 +210,7 @@ White.o: White.cpp.o
 
 # target to build an object file
 White.cpp.o:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.o
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.o
 .PHONY : White.cpp.o
 
 White.i: White.cpp.i
@@ -219,7 +219,7 @@ White.i: White.cpp.i
 
 # target to preprocess a source file
 White.cpp.i:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.i
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.i
 .PHONY : White.cpp.i
 
 White.s: White.cpp.s
@@ -228,35 +228,35 @@ White.s: White.cpp.s
 
 # target to generate assembly for a file
 White.cpp.s:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/White.cpp.s
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.s
 .PHONY : White.cpp.s
 
-corruption.o: corruption.cpp.o
+main.o: main.cpp.o
 
-.PHONY : corruption.o
+.PHONY : main.o
 
 # target to build an object file
-corruption.cpp.o:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/corruption.cpp.o
-.PHONY : corruption.cpp.o
+main.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/main.cpp.o
+.PHONY : main.cpp.o
 
-corruption.i: corruption.cpp.i
+main.i: main.cpp.i
 
-.PHONY : corruption.i
+.PHONY : main.i
 
 # target to preprocess a source file
-corruption.cpp.i:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/corruption.cpp.i
-.PHONY : corruption.cpp.i
+main.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-corruption.s: corruption.cpp.s
+main.s: main.cpp.s
 
-.PHONY : corruption.s
+.PHONY : main.s
 
 # target to generate assembly for a file
-corruption.cpp.s:
-	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/corruption.cpp.s
-.PHONY : corruption.cpp.s
+main.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -265,7 +265,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... server1"
+	@echo "... corrupt"
 	@echo "... edit_cache"
 	@echo "... Distortion.o"
 	@echo "... Distortion.i"
@@ -279,9 +279,9 @@ help:
 	@echo "... White.o"
 	@echo "... White.i"
 	@echo "... White.s"
-	@echo "... corruption.o"
-	@echo "... corruption.i"
-	@echo "... corruption.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 

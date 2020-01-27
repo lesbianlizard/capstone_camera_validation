@@ -139,7 +139,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=server1
+CMAKE_PROJECT_NAME:STATIC=corrupt
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -202,6 +202,12 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/share/OpenCV
+
+//Value Computed by CMake
+corrupt_BINARY_DIR:STATIC=/home/pi/Code/capstone_camera_validation
+
+//Value Computed by CMake
+corrupt_SOURCE_DIR:STATIC=/home/pi/Code/capstone_camera_validation
 
 //Value Computed by CMake
 server1_BINARY_DIR:STATIC=/home/pi/Code/capstone_camera_validation
