@@ -177,6 +177,33 @@ Freeze.cpp.s:
 	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Freeze.cpp.s
 .PHONY : Freeze.cpp.s
 
+Translate.o: Translate.cpp.o
+
+.PHONY : Translate.o
+
+# target to build an object file
+Translate.cpp.o:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.o
+.PHONY : Translate.cpp.o
+
+Translate.i: Translate.cpp.i
+
+.PHONY : Translate.i
+
+# target to preprocess a source file
+Translate.cpp.i:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.i
+.PHONY : Translate.cpp.i
+
+Translate.s: Translate.cpp.s
+
+.PHONY : Translate.s
+
+# target to generate assembly for a file
+Translate.cpp.s:
+	$(MAKE) -f CMakeFiles/server1.dir/build.make CMakeFiles/server1.dir/Translate.cpp.s
+.PHONY : Translate.cpp.s
+
 White.o: White.cpp.o
 
 .PHONY : White.o
@@ -246,6 +273,9 @@ help:
 	@echo "... Freeze.o"
 	@echo "... Freeze.i"
 	@echo "... Freeze.s"
+	@echo "... Translate.o"
+	@echo "... Translate.i"
+	@echo "... Translate.s"
 	@echo "... White.o"
 	@echo "... White.i"
 	@echo "... White.s"

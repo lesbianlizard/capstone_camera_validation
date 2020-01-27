@@ -12,12 +12,14 @@ opencv2/opencv.hpp
 string
 -
 
-/home/pi/Code/capstone_camera_validation/White.cpp
-White.hpp
-/home/pi/Code/capstone_camera_validation/White.hpp
+/home/pi/Code/capstone_camera_validation/Translate.cpp
+Translate.hpp
+/home/pi/Code/capstone_camera_validation/Translate.hpp
 
-/home/pi/Code/capstone_camera_validation/White.hpp
+/home/pi/Code/capstone_camera_validation/Translate.hpp
 unistd.h
+-
+chrono
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp

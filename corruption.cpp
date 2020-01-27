@@ -18,6 +18,7 @@
 #include "Distortion.hpp"
 #include "Freeze.hpp"
 #include "White.hpp"
+#include "Translate.hpp"
 
 void setup(cv::VideoCapture &vid, int &width, int &height);
 
@@ -28,19 +29,21 @@ int main()
     int width, height;
     cv::Mat frame; 
     std::string window = "window";
-    Distortion* dis[3];
-    enum distortion type = WHITE;
+    std::vector<Distortion*> dis(3);
+    enum distortion type = SHIFT;
     cv::VideoCapture vid(0); 
     
     setup(vid, width, height);
     
     Freeze freeze(3000, &vid, &frame, window);
     White white(3000, &vid, &frame, window, 255, height, width); 
+    Translate translate(3000, &vid, &frame, window, 50,50); 
 
     cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     
     dis[0] = &freeze;
     dis[1] = &white;
+    dis[2] = &translate;
 
     while(1){
         dis[type]->run();
