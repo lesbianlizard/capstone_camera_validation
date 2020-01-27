@@ -12,16 +12,19 @@ void White::setShade(int shade)
     std::cout << "Shade set to " << shade << std::endl; 
 }
 
+void White::distort()
+{
+    cv::imshow(m_window, m_blank);
+    cv::waitKey(1);
+}
+
 void White::run()
 {
     readFrame(); 
     checkFrame();
     char cmd = cv::waitKey(1);
-    if(cmd == '1'){
-        cv::imshow(m_window, m_blank);
-        cv::waitKey(1);
-        usleep(m_dur*1000); 
-    }
+    if(cmd == '1')
+        startTimer();
     if(cmd == '2'){
         int val;
         std::cout<<"Enter a number corresponding to the shade (0-255): ";
@@ -36,5 +39,9 @@ void White::run()
         }
         setShade(val);
     }
-    render();
+    if(checkTime())
+        distort();
+    else
+        render();
 }
+

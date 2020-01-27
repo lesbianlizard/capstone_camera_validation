@@ -30,7 +30,7 @@ int main()
     cv::Mat frame; 
     std::string window = "window";
     std::vector<Distortion*> dis(3);
-    enum distortion type = SHIFT;
+    enum distortion type = WHITE;
     cv::VideoCapture vid(0); 
     
     setup(vid, width, height);

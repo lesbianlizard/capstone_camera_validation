@@ -12,6 +12,7 @@ class White: public Distortion
         void setShade(int shade);
 
     private:
+        void distort();
         cv::Mat m_blank;
 };
 

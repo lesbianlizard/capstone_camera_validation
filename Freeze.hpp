@@ -11,8 +11,9 @@ class Freeze: public Distortion
         void run(); 
 
     private:
+        void distort();
         void setPrev();
-        cv::Mat* m_prevFrame;
+        cv::Mat m_prevFrame;
 };
 
 #endif // _FREEZE_H_

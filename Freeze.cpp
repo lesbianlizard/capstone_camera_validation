@@ -5,21 +5,32 @@ Freeze::Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string 
     Distortion(dur, vid, frame, window)
 {}
 
+// Send the data out of this function!!
+void Freeze::distort()
+{
+    cv::imshow(m_window, m_prevFrame);
+    cv::waitKey(1);
+}
+
 void Freeze::setPrev()
 {
-    m_prevFrame = m_frame;
+    m_prevFrame = m_frame->clone();
 }
 
 void Freeze::run()
 {
-    setPrev();
     readFrame(); 
     checkFrame();
     char cmd = cv::waitKey(1);
-    if(cmd == 'm'){
-        cv::imshow(m_window, *m_prevFrame);
-        usleep(m_dur*1000); 
+    if(cmd == '1')
+    {
+        startTimer();
+        setPrev();
     }
-    render();
+    if(checkTime())
+        distort();
+    else
+        render();
 }
+
 

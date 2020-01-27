@@ -11,10 +11,14 @@ opencv2/opencv.hpp
 -
 string
 -
+chrono
+-
 
-/home/pi/Code/capstone_camera_validation/Translate.cpp
-Translate.hpp
-/home/pi/Code/capstone_camera_validation/Translate.hpp
+/home/pi/Code/capstone_camera_validation/Freeze.hpp
+unistd.h
+-
+Distortion.hpp
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
 
 /home/pi/Code/capstone_camera_validation/Translate.hpp
 unistd.h
@@ -23,4 +27,30 @@ chrono
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
+
+/home/pi/Code/capstone_camera_validation/White.hpp
+unistd.h
+-
+Distortion.hpp
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
+
+/home/pi/Code/capstone_camera_validation/corruption.cpp
+stdio.h
+-
+opencv2/opencv.hpp
+-
+iostream
+-
+unistd.h
+-
+stdio.h
+-
+Distortion.hpp
+/home/pi/Code/capstone_camera_validation/Distortion.hpp
+Freeze.hpp
+/home/pi/Code/capstone_camera_validation/Freeze.hpp
+White.hpp
+/home/pi/Code/capstone_camera_validation/White.hpp
+Translate.hpp
+/home/pi/Code/capstone_camera_validation/Translate.hpp
 
