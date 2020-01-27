@@ -20,9 +20,10 @@
 #include "White.hpp"
 #include "Translate.hpp"
 
-void setup(cv::VideoCapture &vid, int &width, int &height);
-
 enum distortion{FREEZE, WHITE, SHIFT};
+
+void setup(cv::VideoCapture &vid, int &width, int &height);
+void getType(distortion &type);
 
 int main()
 {
@@ -46,12 +47,32 @@ int main()
     dis[2] = &translate;
 
     while(1){
+        getType(type);
         dis[type]->run();
     }
         
     return 0; 
 }
 
+void getType(distortion &type)
+{
+    char cmd = cv::waitKey(1);
+    if(cmd == 'q')
+    {
+        type = FREEZE;
+        std::cout<<"FREEZE"<<std::endl;
+    }
+    if(cmd == 'w')
+    {
+        type = WHITE;
+        std::cout<<"WHITE"<<std::endl;
+    }
+    if(cmd == 'e')
+    {
+        type = SHIFT;
+        std::cout<<"SHIFT"<<std::endl;
+    }
+} 
 
 void setup(cv::VideoCapture &vid, int &width, int &height)
 {
