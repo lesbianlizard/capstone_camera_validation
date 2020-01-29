@@ -9,10 +9,12 @@ class White: public Distortion
     public: 
         White(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window, int shade, int height, int width);
         void run(); 
-        void setShade(int shade);
+        void update();
 
     private:
+        void setShade(int shade);
         void distort();
+        bool m_on;
         cv::Mat m_blank;
 };
 

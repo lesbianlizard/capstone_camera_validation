@@ -9,11 +9,11 @@ class Freeze: public Distortion
     public: 
         Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window);
         void run(); 
+        void update();
 
     private:
         void distort();
-        void setPrev();
-        cv::Mat m_prevFrame;
+        bool m_on;
 };
 
 #endif // _FREEZE_H_

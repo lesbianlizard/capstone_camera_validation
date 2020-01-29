@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/pi/Code/capstone_camera_validation/Distortion.cpp
-Distortion.hpp
-/home/pi/Code/capstone_camera_validation/Distortion.hpp
-
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 opencv2/opencv.hpp
 -
@@ -18,19 +14,11 @@ string
 chrono
 -
 
-/home/pi/Code/capstone_camera_validation/Freeze.cpp
-Freeze.hpp
-/home/pi/Code/capstone_camera_validation/Freeze.hpp
-
 /home/pi/Code/capstone_camera_validation/Freeze.hpp
 unistd.h
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
-
-/home/pi/Code/capstone_camera_validation/Translate.cpp
-Translate.hpp
-/home/pi/Code/capstone_camera_validation/Translate.hpp
 
 /home/pi/Code/capstone_camera_validation/Translate.hpp
 unistd.h
@@ -39,10 +27,6 @@ chrono
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
-
-/home/pi/Code/capstone_camera_validation/White.cpp
-White.hpp
-/home/pi/Code/capstone_camera_validation/White.hpp
 
 /home/pi/Code/capstone_camera_validation/White.hpp
 unistd.h
@@ -60,6 +44,12 @@ iostream
 unistd.h
 -
 stdio.h
+-
+pthread.h
+-
+mutex
+-
+zmq.hpp
 -
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp

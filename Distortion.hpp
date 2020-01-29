@@ -13,6 +13,7 @@ class Distortion
         void setTime(int dur); 
 
     protected:
+        virtual void update() = 0;
         virtual void distort() = 0;
         void startTimer();
         bool checkTime();

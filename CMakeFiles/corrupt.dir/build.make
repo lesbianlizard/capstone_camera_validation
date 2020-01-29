@@ -165,6 +165,7 @@ corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_text.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_ximgproc.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_xobjdetect.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_xphoto.so.3.2.0
+corrupt: /usr/lib/arm-linux-gnueabihf/libzmq.so
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_video.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_viz.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_phase_unwrapping.so.3.2.0
