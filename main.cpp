@@ -11,6 +11,7 @@
 #include <stdio.h> 
 #include <pthread.h>  
 #include <mutex>     
+#include <sched.h>
 #include <zmq.hpp>     
 #include "Distortion.hpp"
 #include "Freeze.hpp"
@@ -20,25 +21,28 @@
 
 enum distortion{FREEZE, WHITE, SHIFT};
 std::mutex mtx;
+std::vector<Distortion*> dis(3);
+enum distortion type;
 
 void setup(cv::VideoCapture &vid, int &width, int &height);
-void getType(distortion &type);
 void *handleIPC(void *threadid);
+void dispatch(std::vector<std::string> cmd);
+void checkFrame(cv::Mat &frame);
 
 int main()
 {
     int width, height;
     cv::Mat frame; 
-    std::vector<Distortion*> dis(3);
-    enum distortion type = WHITE;
+    cv::Mat* dframe;
+    type = SHIFT;
     std::string window = "window";
     cv::VideoCapture vid(0); 
     
     setup(vid, width, height);
     
-    Freeze freeze(3000, &vid, &frame, window);
-    White white(3000, &vid, &frame, window, 255, height, width); 
-    Translate translate(3000, &vid, &frame, window, height, width); 
+    Freeze freeze(100);
+    White white(50, 255, height, width); 
+    Translate translate(50, height, width, 15, 15); 
 
     cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     
@@ -48,15 +52,19 @@ int main()
 
     // spawn the IPC socket thread
     pthread_t ipcHandler;
-    int rc = pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
-    if (rc) {
-        std::cout << "Error:unable to start server" << rc << std::endl;
-        std::exit(-1);
-    }
-
+    pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
 
     while(1)
-        dis[type]->run();
+    {
+        vid >> frame;  
+        checkFrame(frame);
+        dframe = &frame; 
+        mtx.lock();
+        dis[type]->run(dframe);
+        mtx.unlock();
+        cv::imshow(window, *dframe);
+        cv::waitKey(1);
+    }
 
     return 0; 
 }
@@ -103,18 +111,60 @@ void *handleIPC(void *threadid)
 
     while (true) {
         zmq::message_t request;
-
         //  Wait for next request from client
         socket.recv (&request);
-        std::cout << "Received Command" << std::endl;
 
-        //  Do some 'work'
-    	sleep(1);
+        // process the data input
+        std::string cmd = std::string(static_cast<char*>(request.data()), request.size());
+        std::cout<< cmd <<std::endl;
+        std::stringstream ss(cmd);
+        std::vector<std::string> result;
+        while(ss.good())
+        {   
+            std::string substr;
+            getline( ss, substr, ',' );
+            result.push_back( substr );
+        }
+        for(int i=0; i < result.size(); i++)
+            std::cout << result.at(i) << ' ';
+
+        // lock the mutex and update the filter
+        mtx.lock();
+        dispatch(result);
+        mtx.unlock();
 
         //  Send reply back to client
-        zmq::message_t reply (5);
-        memcpy (reply.data (), "ACK", 5);
+        zmq::message_t reply (3);
+        memcpy (reply.data (), "ACK", 3);
         socket.send (reply);
     }
+}
 
+void dispatch(std::vector<std::string> cmd)
+{
+    switch(stoi(cmd[0],nullptr))
+    {
+        case 1:
+            type = FREEZE; 
+            dis[type]->activate();
+            break;
+        case 2:
+            type = WHITE; 
+            dis[type]->activate();
+            break;
+        case 3:
+            type = SHIFT; 
+            dis[type]->activate();
+            break;
+    }
+    std::cout<< "type: " << type << std::endl;
+}
+
+void checkFrame(cv::Mat &frame)
+{
+    if(frame.empty())
+    {
+        std::cout<<"EXIT";
+        exit(EXIT_FAILURE);
+    }
 }

@@ -1,30 +1,23 @@
 #include "Freeze.hpp"
  
  
-Freeze::Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window) : 
-    Distortion(dur, vid, frame, window), m_on(false)
-{}
-
-void Freeze::distort()
+Freeze::Freeze(uint32_t dur) : 
+    Distortion(dur)
 {}
 
 void Freeze::update()
 {}
 
-void Freeze::run()
+void Freeze::run(cv::Mat *&frame)
 {
-    if(!m_on)
-        readFrame(); 
-    checkFrame();
-    char cmd = cv::waitKey(1);
-    if(cmd == '1')
+    if(m_on)
     {
         startTimer();
-        m_on = true; 
+        m_prev = frame->clone();
+        m_on = false; 
     }
-    if(!checkTime())
-        m_on = false;
-    render();
+    if(isActive())
+        frame = &m_prev;
 }
 
 

@@ -1,7 +1,7 @@
 #include "Translate.hpp"
  
-Translate::Translate(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window, int x, int y) : 
-    Distortion(dur, vid, frame, window), m_width(x), m_height(y), m_x(0), m_y(0)
+Translate::Translate(uint32_t dur, int x, int y, int x_off, int y_off) : 
+    Distortion(dur), m_width(x), m_height(y), m_x(x_off), m_y(y_off)
 {}
 
 void Translate::update()
@@ -17,20 +17,16 @@ void Translate::setY(int y)
     m_y = y;
 }
 
-void Translate::distort()
+void Translate::run(cv::Mat *&frame)
 {
-	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, m_x, 0, 1, m_y);
-	cv::warpAffine(*m_frame, *m_frame, trans_mat, m_frame->size());               
-}
-
-void Translate::run()
-{
-    readFrame(); 
-    checkFrame();
-    char cmd = cv::waitKey(1);
-    if(cmd == '1')
+    if(m_on)
+    {
         startTimer();
-    if(checkTime())
-        distort();
-    render();
+        m_on = false;
+    }
+    if(isActive())
+    {
+        cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, m_x, 0, 1, m_y);  
+        cv::warpAffine(*frame, *frame, trans_mat, frame->size());   
+    }
 }

@@ -9,28 +9,20 @@
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 opencv2/opencv.hpp
 -
-string
+mutex
 -
 chrono
 -
 
 /home/pi/Code/capstone_camera_validation/Freeze.hpp
-unistd.h
--
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 
 /home/pi/Code/capstone_camera_validation/Translate.hpp
-unistd.h
--
-chrono
--
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 
 /home/pi/Code/capstone_camera_validation/White.hpp
-unistd.h
--
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 
@@ -48,6 +40,8 @@ stdio.h
 pthread.h
 -
 mutex
+-
+sched.h
 -
 zmq.hpp
 -

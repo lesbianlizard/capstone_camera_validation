@@ -1,7 +1,7 @@
 #include "White.hpp"
  
-White::White(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window, int shade, int height, int width) : 
-    Distortion(dur, vid, frame, window), m_on(false)
+White::White(uint32_t dur, int shade, int height, int width) : 
+    Distortion(dur)
 {
     m_blank = cv::Mat(height, width, CV_8UC3, cv::Scalar(shade,shade,shade)); 
 }
@@ -12,43 +12,17 @@ void White::setShade(int shade)
     std::cout << "Shade set to " << shade << std::endl; 
 }
 
-void White::distort()
-{
-    *m_frame = m_blank.clone();
-}
-
 void White::update()
-{
-    int val;
-    std::cout<<"Enter a number corresponding to the shade (0-255): ";
-    while(1)
-    {
-        std::cin >> val;
-        std::cin.ignore();
-        if(val >= 0 && val <= 255)
-            break;
-        else
-            std::cout<<"Enter a value between 0 and 255: ";
-    }
-    setShade(val);
-}
+{}
 
-void White::run()
+void White::run(cv::Mat *&frame)
 {
-    if(!m_on)
-        readFrame(); 
-    checkFrame();
-    char cmd = cv::waitKey(1);
-    if(cmd == '1')
+    if(m_on)
     {
         startTimer();
-        distort();
-        m_on = true;
-    }
-    if(cmd == '2')
-        update();
-    if(!checkTime())
         m_on = false;
-    render();
+    }
+    if(isActive())
+        frame = &m_blank;   
 }
 

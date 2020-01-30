@@ -1,10 +1,8 @@
 #include "Distortion.hpp"
 
-Distortion::Distortion(int dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window) :
-    m_dur(dur), m_vid(vid), m_frame(frame), m_window(window),
-    m_start(std::chrono::high_resolution_clock::now()), m_end(std::chrono::milliseconds(0))
+Distortion::Distortion(int dur) : 
+    m_dur(dur), m_start(std::chrono::high_resolution_clock::now()), m_end(std::chrono::milliseconds(0)), m_on(false)
 {}
-
 
 void Distortion::setTime(int dur)
 {
@@ -13,34 +11,27 @@ void Distortion::setTime(int dur)
 
 void Distortion::startTimer()
 {
-    m_end = m_start + std::chrono::milliseconds(m_dur);
+    takeTime();
+    m_end = m_start; 
 }
 
-bool Distortion::checkTime()
+void Distortion::activate()
 {
-    m_start = std::chrono::high_resolution_clock::now();
-    if(std::chrono::duration_cast<std::chrono::milliseconds>(m_end - m_start).count() > 0)
+    m_on = true;
+}
+
+// migrate adding the duratino to m_end in the checkTime function so dynamically
+// increasing the duration through the gui effects the bevahior if a timer is alread set
+bool Distortion::isActive()
+{
+    takeTime();
+    if(std::chrono::duration_cast<std::chrono::milliseconds>((m_end + std::chrono::milliseconds(m_dur)) - m_start).count() > 0)
         return true;
     return false;
 }
 
-void Distortion::readFrame()
+void Distortion::takeTime()
 {
-    *m_vid >> *m_frame; 
-}
-
-void Distortion::checkFrame()
-{
-    if(m_frame->empty())
-    {
-        std::cout<<"EXIT";
-        exit(EXIT_FAILURE);
-    }
-}
-
-void Distortion::render()
-{
-    cv::imshow(m_window, *m_frame);
-    cv::waitKey(1);
+    m_start = std::chrono::high_resolution_clock::now();
 }
 

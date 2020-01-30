@@ -1,19 +1,17 @@
 #ifndef _FREEZE_H_
 #define _FREEZE_H_
 
-#include <unistd.h> 
 #include "Distortion.hpp"
 
 class Freeze: public Distortion 
 {
     public: 
-        Freeze(uint32_t dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window);
-        void run(); 
+        Freeze(uint32_t dur);
+        void run(cv::Mat *&frame); 
         void update();
-
+    
     private:
-        void distort();
-        bool m_on;
+        cv::Mat m_prev;
 };
 
 #endif // _FREEZE_H_

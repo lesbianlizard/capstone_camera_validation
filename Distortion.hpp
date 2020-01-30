@@ -2,28 +2,24 @@
 #define _DISTORTION_H_
 
 #include <opencv2/opencv.hpp>
-#include <string>
+#include <mutex>  
 #include <chrono>
 
 class Distortion 
 {
     public: 
-        Distortion(int dur, cv::VideoCapture* vid, cv::Mat* frame, std::string window);
-        virtual void run() = 0; 
+        Distortion(int dur);
+        virtual void run(cv::Mat *&frame) = 0; 
         void setTime(int dur); 
+        void activate();
 
     protected:
         virtual void update() = 0;
-        virtual void distort() = 0;
         void startTimer();
-        bool checkTime();
-        void checkFrame();
-        void readFrame();
-        void render();
+        bool isActive();
+        void takeTime();
         int m_dur;                  // in ms
-        std::string m_window;
-        cv::VideoCapture* m_vid;
-        cv::Mat* m_frame;
+        bool m_on;
         std::chrono::system_clock::time_point m_start; 
         std::chrono::system_clock::time_point m_end;
 };
