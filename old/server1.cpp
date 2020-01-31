@@ -199,15 +199,18 @@ int main()
 	{
 		return 0;
 	}
- 
+	
+	cv::VideoCapture capture(0);
+	cv::Mat image2; 
+
 	cv::Mat image;
+	uint32_t counter = 0;
 	while (1)
 	{
 		if(socketMat.receive(image) > 0)
 		{
 			cv::imshow("",image);
             cv::imwrite("test.jpg",image);
-			cv::waitKey(30);
 		}
 	}
  

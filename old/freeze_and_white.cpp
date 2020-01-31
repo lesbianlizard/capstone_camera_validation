@@ -1,4 +1,3 @@
-
 // CAMERA CODE
 /*************************************************
  * Freeze image program
@@ -180,4 +179,3 @@ int main(){
     
     return 0; 
 }
-
