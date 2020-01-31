@@ -228,7 +228,7 @@ int main(){
 	else if(c == 'r'){
 	    Mat red1(height, width, CV_8UC3, Scalar(0,0,255)); 
 
-	    imshow("frozen", green1);
+	    imshow("frozen", red1);
 	    if (waitKey(0)){
 	    
 	    }
