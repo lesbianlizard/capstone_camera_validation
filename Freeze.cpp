@@ -5,8 +5,13 @@ Freeze::Freeze(uint32_t dur) :
     Distortion(dur)
 {}
 
-void Freeze::update()
-{}
+// ['1', 't/f', 'dur(ms)']
+void Freeze::update(std::vector<std::string> cmd)
+{
+    if(stoi(cmd[1], nullptr))
+        activate();
+    setTime(stoi(cmd[2], nullptr));
+}
 
 void Freeze::run(cv::Mat *&frame)
 {

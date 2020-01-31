@@ -3,7 +3,7 @@ import zmq
 context = zmq.Context()
 
 #  Socket to talk to server
-print("Connecting to hello world server...")
+print("----------- WELCOME TO THE CORRUPTION GUI ------------")
 socket = context.socket(zmq.REQ)
 socket.connect("tcp://localhost:5555")
 
@@ -21,7 +21,7 @@ while True:
         exit()
 
 
-# Format (use .join(',') method for csv of commands
-# Freeze:   ['1', 'dur(ms)', 't/f']
-# Shade:    ['2', 'dur(ms)', 't/f', 'shade(0-255)']
-# Translate ['3', 'dur(ms)', 't/f', 'x_offset', 'y_offset']
+# Format (use .join(',') method on a dynamically constructed list object) to produce these commands
+# Freeze:   ['1', 't/f', 'dur(ms)']
+# White:    ['2', 't/f', 'dur(ms)', 'shade(0-255)']
+# Translate ['3', 't/f', 'dur(ms)', 'x_offset', 'y_offset']

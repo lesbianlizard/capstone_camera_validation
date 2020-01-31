@@ -71,6 +71,7 @@ int main()
 
 void setup(cv::VideoCapture &vid, int &width, int &height)
 {
+    std::cout<< "--------- CORRUPTION UNIT DISTORTION PROGRAM ----------"<<std::endl;
     int size_in;
     if(!vid.isOpened())
         return;
@@ -115,22 +116,23 @@ void *handleIPC(void *threadid)
         socket.recv (&request);
 
         // process the data input
-        std::string cmd = std::string(static_cast<char*>(request.data()), request.size());
-        std::cout<< cmd <<std::endl;
-        std::stringstream ss(cmd);
-        std::vector<std::string> result;
+        std::string cmd_str = std::string(static_cast<char*>(request.data()), request.size());
+        std::cout<< cmd_str <<std::endl;
+        std::stringstream ss(cmd_str);
+        std::vector<std::string> cmd;
         while(ss.good())
         {   
             std::string substr;
             getline( ss, substr, ',' );
-            result.push_back( substr );
+            cmd.push_back( substr );
         }
-        for(int i=0; i < result.size(); i++)
-            std::cout << result.at(i) << ' ';
+        for(int i=0; i < cmd.size(); i++)
+            std::cout << cmd.at(i) << ' ';
+
 
         // lock the mutex and update the filter
         mtx.lock();
-        dispatch(result);
+        dispatch(cmd);
         mtx.unlock();
 
         //  Send reply back to client
@@ -140,24 +142,28 @@ void *handleIPC(void *threadid)
     }
 }
 
+// Format (use .join(',') method on a dynamically constructed list object) to produce these commands
+// Freeze:   ['1', '1/0', 'dur(ms)']
+// White:    ['2', '1/0', 'dur(ms)', 'shade(0-255)']
+// Translate ['3', '1/0', 'dur(ms)', 'x_offset', 'y_offset']
+// Introduce better error handling here!
 void dispatch(std::vector<std::string> cmd)
 {
     switch(stoi(cmd[0],nullptr))
     {
         case 1:
             type = FREEZE; 
-            dis[type]->activate();
+            dis[type]->update(cmd);
             break;
         case 2:
             type = WHITE; 
-            dis[type]->activate();
+            dis[type]->update(cmd);
             break;
         case 3:
             type = SHIFT; 
-            dis[type]->activate();
+            dis[type]->update(cmd);
             break;
     }
-    std::cout<< "type: " << type << std::endl;
 }
 
 void checkFrame(cv::Mat &frame)

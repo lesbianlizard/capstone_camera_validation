@@ -2,7 +2,6 @@
 #define _DISTORTION_H_
 
 #include <opencv2/opencv.hpp>
-#include <mutex>  
 #include <chrono>
 
 class Distortion 
@@ -12,9 +11,9 @@ class Distortion
         virtual void run(cv::Mat *&frame) = 0; 
         void setTime(int dur); 
         void activate();
+        virtual void update(std::vector<std::string> cmd) = 0;
 
     protected:
-        virtual void update() = 0;
         void startTimer();
         bool isActive();
         void takeTime();

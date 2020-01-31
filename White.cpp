@@ -12,8 +12,16 @@ void White::setShade(int shade)
     std::cout << "Shade set to " << shade << std::endl; 
 }
 
-void White::update()
-{}
+// ['2', 't/f', 'dur(ms)', 'shade(0-255)']
+void White::update(std::vector<std::string> cmd)
+{
+    if(stoi(cmd[1], nullptr))
+        activate();
+    setTime(stoi(cmd[2], nullptr));
+    int shade = stoi(cmd[3], nullptr);
+    if(shade <= 255 && shade >= 0)
+        setShade(shade);
+}
 
 void White::run(cv::Mat *&frame)
 {

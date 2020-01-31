@@ -8,7 +8,7 @@ class Translate: public Distortion
     public: 
         Translate(uint32_t dur, int x, int y, int x_off, int y_off);
         void run(cv::Mat *&frame); 
-        void update();
+        void update(std::vector<std::string> cmd);
 
     private:
         void setX(int x);

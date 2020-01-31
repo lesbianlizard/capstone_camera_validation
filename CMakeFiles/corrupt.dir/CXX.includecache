@@ -9,8 +9,6 @@
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 opencv2/opencv.hpp
 -
-mutex
--
 chrono
 -
 
