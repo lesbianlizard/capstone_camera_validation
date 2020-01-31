@@ -17,8 +17,9 @@
 #include "Freeze.hpp"
 #include "White.hpp"
 #include "Translate.hpp"
+#include "Socket.h"
 
-
+#define COMP_IP "192.168.1.120"
 enum distortion{FREEZE, WHITE, SHIFT};
 std::mutex mtx;
 std::vector<Distortion*> dis(3);
@@ -31,6 +32,13 @@ void checkFrame(cv::Mat &frame);
 
 int main()
 {
+    SocketMatTransmissionClient socketMat;
+	if (socketMat.socketConnect(COMP_IP, 6666) < 0)
+	{
+		return 0;
+	}
+	
+
     int width, height;
     cv::Mat frame; 
     cv::Mat* dframe;
@@ -62,12 +70,16 @@ int main()
         mtx.lock();
         dis[type]->run(dframe);
         mtx.unlock();
-        cv::imshow(window, *dframe);
-        cv::waitKey(1);
+        socketMat.transmit(*dframe);
+        // cv::imshow(window, *dframe);
+        // cv::waitKey(1);
     }
 
     return 0; 
 }
+
+
+
 
 void setup(cv::VideoCapture &vid, int &width, int &height)
 {
@@ -174,3 +186,13 @@ void checkFrame(cv::Mat &frame)
         exit(EXIT_FAILURE);
     }
 }
+
+
+
+
+
+
+
+
+
+

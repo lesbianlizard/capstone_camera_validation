@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/corrupt.dir/Freeze.cpp.o"
   "CMakeFiles/corrupt.dir/White.cpp.o"
   "CMakeFiles/corrupt.dir/Translate.cpp.o"
+  "CMakeFiles/corrupt.dir/Socket.cpp.o"
   "CMakeFiles/corrupt.dir/main.cpp.o"
   "corrupt.pdb"
   "corrupt"

@@ -8,6 +8,9 @@ CMakeFiles/corrupt.dir/Freeze.cpp.o
  /home/pi/Code/capstone_camera_validation/Distortion.hpp
  /home/pi/Code/capstone_camera_validation/Freeze.cpp
  /home/pi/Code/capstone_camera_validation/Freeze.hpp
+CMakeFiles/corrupt.dir/Socket.cpp.o
+ /home/pi/Code/capstone_camera_validation/Socket.cpp
+ /home/pi/Code/capstone_camera_validation/Socket.h
 CMakeFiles/corrupt.dir/Translate.cpp.o
  /home/pi/Code/capstone_camera_validation/Distortion.hpp
  /home/pi/Code/capstone_camera_validation/Translate.cpp
@@ -19,6 +22,7 @@ CMakeFiles/corrupt.dir/White.cpp.o
 CMakeFiles/corrupt.dir/main.cpp.o
  /home/pi/Code/capstone_camera_validation/Distortion.hpp
  /home/pi/Code/capstone_camera_validation/Freeze.hpp
+ /home/pi/Code/capstone_camera_validation/Socket.h
  /home/pi/Code/capstone_camera_validation/Translate.hpp
  /home/pi/Code/capstone_camera_validation/White.hpp
  /home/pi/Code/capstone_camera_validation/main.cpp

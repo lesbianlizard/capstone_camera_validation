@@ -8,6 +8,9 @@ CMakeFiles/corrupt.dir/Freeze.cpp.o: Distortion.hpp
 CMakeFiles/corrupt.dir/Freeze.cpp.o: Freeze.cpp
 CMakeFiles/corrupt.dir/Freeze.cpp.o: Freeze.hpp
 
+CMakeFiles/corrupt.dir/Socket.cpp.o: Socket.cpp
+CMakeFiles/corrupt.dir/Socket.cpp.o: Socket.h
+
 CMakeFiles/corrupt.dir/Translate.cpp.o: Distortion.hpp
 CMakeFiles/corrupt.dir/Translate.cpp.o: Translate.cpp
 CMakeFiles/corrupt.dir/Translate.cpp.o: Translate.hpp
@@ -18,6 +21,7 @@ CMakeFiles/corrupt.dir/White.cpp.o: White.hpp
 
 CMakeFiles/corrupt.dir/main.cpp.o: Distortion.hpp
 CMakeFiles/corrupt.dir/main.cpp.o: Freeze.hpp
+CMakeFiles/corrupt.dir/main.cpp.o: Socket.h
 CMakeFiles/corrupt.dir/main.cpp.o: Translate.hpp
 CMakeFiles/corrupt.dir/main.cpp.o: White.hpp
 CMakeFiles/corrupt.dir/main.cpp.o: main.cpp

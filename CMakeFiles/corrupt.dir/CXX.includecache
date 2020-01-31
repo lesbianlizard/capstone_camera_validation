@@ -16,6 +16,32 @@ chrono
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
 
+/home/pi/Code/capstone_camera_validation/Socket.h
+opencv2/opencv.hpp
+/home/pi/Code/capstone_camera_validation/opencv2/opencv.hpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+errno.h
+-
+unistd.h
+-
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+arpa/inet.h
+-
+
+/home/pi/Code/capstone_camera_validation/Translate.cpp
+Translate.hpp
+/home/pi/Code/capstone_camera_validation/Translate.hpp
+
 /home/pi/Code/capstone_camera_validation/Translate.hpp
 Distortion.hpp
 /home/pi/Code/capstone_camera_validation/Distortion.hpp
@@ -51,4 +77,6 @@ White.hpp
 /home/pi/Code/capstone_camera_validation/White.hpp
 Translate.hpp
 /home/pi/Code/capstone_camera_validation/Translate.hpp
+Socket.h
+/home/pi/Code/capstone_camera_validation/Socket.h
 

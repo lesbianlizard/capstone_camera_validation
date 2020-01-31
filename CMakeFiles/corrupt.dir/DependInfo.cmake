@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/pi/Code/capstone_camera_validation/Distortion.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/Distortion.cpp.o"
   "/home/pi/Code/capstone_camera_validation/Freeze.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/Freeze.cpp.o"
+  "/home/pi/Code/capstone_camera_validation/Socket.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/Socket.cpp.o"
   "/home/pi/Code/capstone_camera_validation/Translate.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/Translate.cpp.o"
   "/home/pi/Code/capstone_camera_validation/White.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/White.cpp.o"
   "/home/pi/Code/capstone_camera_validation/main.cpp" "/home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/main.cpp.o"

@@ -13,9 +13,9 @@ void Translate::update(std::vector<std::string> cmd)
     setTime(stoi(cmd[2], nullptr));
     int x_off = stoi(cmd[3], nullptr);
     int y_off = stoi(cmd[4], nullptr);
-    if(x_off <= m_width && x_off >= 0)
+    if(x_off <= m_width && x_off >= -m_width)
         setX(x_off);
-    if(y_off <= m_height && y_off >= 0)
+    if(y_off <= m_height && y_off >= -m_height)
         setY(y_off);
 }
 

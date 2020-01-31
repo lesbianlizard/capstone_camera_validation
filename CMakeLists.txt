@@ -16,5 +16,5 @@ find_library(ZeroMQ_LIBRARY
         )
 
 include_directories( ${OpenCV_INCLUDE_DIRS} ${ZeroMQ_INCLUDE_DIR})
-add_executable( corrupt Distortion.hpp Distortion.cpp Freeze.hpp Freeze.cpp White.hpp White.cpp Translate.hpp Translate.cpp main.cpp)
+add_executable( corrupt Distortion.hpp Distortion.cpp Freeze.hpp Freeze.cpp White.hpp White.cpp Translate.hpp Translate.cpp Socket.h Socket.cpp main.cpp)
 target_link_libraries( corrupt ${OpenCV_LIBS}  ${ZeroMQ_LIBRARY} pthread)
