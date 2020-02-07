@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pi/Code/capstone_camera_validation
+CMAKE_SOURCE_DIR = /home/pi/Code/capstone_camera_validation/Corruption
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pi/Code/capstone_camera_validation
+CMAKE_BINARY_DIR = /home/pi/Code/capstone_camera_validation/Corruption
 
 # Include any dependencies generated for this target.
 include CMakeFiles/corrupt.dir/depend.make
@@ -59,81 +59,81 @@ include CMakeFiles/corrupt.dir/flags.make
 
 CMakeFiles/corrupt.dir/Distortion.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/Distortion.cpp.o: Distortion.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/corrupt.dir/Distortion.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Distortion.cpp.o -c /home/pi/Code/capstone_camera_validation/Distortion.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/corrupt.dir/Distortion.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Distortion.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/Distortion.cpp
 
 CMakeFiles/corrupt.dir/Distortion.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/Distortion.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Distortion.cpp > CMakeFiles/corrupt.dir/Distortion.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/Distortion.cpp > CMakeFiles/corrupt.dir/Distortion.cpp.i
 
 CMakeFiles/corrupt.dir/Distortion.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/Distortion.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Distortion.cpp -o CMakeFiles/corrupt.dir/Distortion.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/Distortion.cpp -o CMakeFiles/corrupt.dir/Distortion.cpp.s
 
 CMakeFiles/corrupt.dir/Freeze.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/Freeze.cpp.o: Freeze.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/corrupt.dir/Freeze.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Freeze.cpp.o -c /home/pi/Code/capstone_camera_validation/Freeze.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/corrupt.dir/Freeze.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Freeze.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/Freeze.cpp
 
 CMakeFiles/corrupt.dir/Freeze.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/Freeze.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Freeze.cpp > CMakeFiles/corrupt.dir/Freeze.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/Freeze.cpp > CMakeFiles/corrupt.dir/Freeze.cpp.i
 
 CMakeFiles/corrupt.dir/Freeze.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/Freeze.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Freeze.cpp -o CMakeFiles/corrupt.dir/Freeze.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/Freeze.cpp -o CMakeFiles/corrupt.dir/Freeze.cpp.s
 
 CMakeFiles/corrupt.dir/White.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/White.cpp.o: White.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/corrupt.dir/White.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/White.cpp.o -c /home/pi/Code/capstone_camera_validation/White.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/corrupt.dir/White.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/White.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/White.cpp
 
 CMakeFiles/corrupt.dir/White.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/White.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/White.cpp > CMakeFiles/corrupt.dir/White.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/White.cpp > CMakeFiles/corrupt.dir/White.cpp.i
 
 CMakeFiles/corrupt.dir/White.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/White.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/White.cpp -o CMakeFiles/corrupt.dir/White.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/White.cpp -o CMakeFiles/corrupt.dir/White.cpp.s
 
 CMakeFiles/corrupt.dir/Translate.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/Translate.cpp.o: Translate.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/corrupt.dir/Translate.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Translate.cpp.o -c /home/pi/Code/capstone_camera_validation/Translate.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/corrupt.dir/Translate.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Translate.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/Translate.cpp
 
 CMakeFiles/corrupt.dir/Translate.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/Translate.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Translate.cpp > CMakeFiles/corrupt.dir/Translate.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/Translate.cpp > CMakeFiles/corrupt.dir/Translate.cpp.i
 
 CMakeFiles/corrupt.dir/Translate.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/Translate.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Translate.cpp -o CMakeFiles/corrupt.dir/Translate.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/Translate.cpp -o CMakeFiles/corrupt.dir/Translate.cpp.s
 
 CMakeFiles/corrupt.dir/Socket.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/Socket.cpp.o: Socket.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/corrupt.dir/Socket.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Socket.cpp.o -c /home/pi/Code/capstone_camera_validation/Socket.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/corrupt.dir/Socket.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/Socket.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/Socket.cpp
 
 CMakeFiles/corrupt.dir/Socket.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/Socket.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Socket.cpp > CMakeFiles/corrupt.dir/Socket.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/Socket.cpp > CMakeFiles/corrupt.dir/Socket.cpp.i
 
 CMakeFiles/corrupt.dir/Socket.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/Socket.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Socket.cpp -o CMakeFiles/corrupt.dir/Socket.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/Socket.cpp -o CMakeFiles/corrupt.dir/Socket.cpp.s
 
 CMakeFiles/corrupt.dir/main.cpp.o: CMakeFiles/corrupt.dir/flags.make
 CMakeFiles/corrupt.dir/main.cpp.o: main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/corrupt.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/main.cpp.o -c /home/pi/Code/capstone_camera_validation/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/corrupt.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/corrupt.dir/main.cpp.o -c /home/pi/Code/capstone_camera_validation/Corruption/main.cpp
 
 CMakeFiles/corrupt.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/corrupt.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/main.cpp > CMakeFiles/corrupt.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/Code/capstone_camera_validation/Corruption/main.cpp > CMakeFiles/corrupt.dir/main.cpp.i
 
 CMakeFiles/corrupt.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/corrupt.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/main.cpp -o CMakeFiles/corrupt.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/Code/capstone_camera_validation/Corruption/main.cpp -o CMakeFiles/corrupt.dir/main.cpp.s
 
 # Object files for target corrupt
 corrupt_OBJECTS = \
@@ -197,7 +197,7 @@ corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_imgcodecs.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_imgproc.so.3.2.0
 corrupt: /usr/lib/arm-linux-gnueabihf/libopencv_core.so.3.2.0
 corrupt: CMakeFiles/corrupt.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/pi/Code/capstone_camera_validation/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable corrupt"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable corrupt"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/corrupt.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -210,6 +210,6 @@ CMakeFiles/corrupt.dir/clean:
 .PHONY : CMakeFiles/corrupt.dir/clean
 
 CMakeFiles/corrupt.dir/depend:
-	cd /home/pi/Code/capstone_camera_validation && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pi/Code/capstone_camera_validation /home/pi/Code/capstone_camera_validation /home/pi/Code/capstone_camera_validation /home/pi/Code/capstone_camera_validation /home/pi/Code/capstone_camera_validation/CMakeFiles/corrupt.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/pi/Code/capstone_camera_validation/Corruption && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pi/Code/capstone_camera_validation/Corruption /home/pi/Code/capstone_camera_validation/Corruption /home/pi/Code/capstone_camera_validation/Corruption /home/pi/Code/capstone_camera_validation/Corruption /home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles/corrupt.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/corrupt.dir/depend
 

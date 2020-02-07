@@ -12,36 +12,45 @@
 #include <pthread.h>  
 #include <mutex>     
 #include <sched.h>
-#include <zmq.hpp>     
+#include <zmq.hpp>    
+#include <queue>  
+#include <condition_variable>
 #include "Distortion.hpp"
 #include "Freeze.hpp"
 #include "White.hpp"
 #include "Translate.hpp"
 #include "Socket.h"
 
-#define COMP_IP "192.168.1.120"
+// my IP, moose1 "192.168.1.122"
+
+#define COMP_IP "192.168.1.124"
+#define ETHERNET true
 enum distortion{FREEZE, WHITE, SHIFT};
 std::mutex mtx;
+std::mutex mtxEth;
+std::condition_variable flag;
+std::queue<cv::Mat*> myqueue;
+
 std::vector<Distortion*> dis(3);
+SocketMatTransmissionClient socketMat;
 enum distortion type;
+int width, height;
+cv::Mat frame; 
+cv::Mat* dframe;
+uint8_t im_flag = 0;
 
 void setup(cv::VideoCapture &vid, int &width, int &height);
 void *handleIPC(void *threadid);
+void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
 void checkFrame(cv::Mat &frame);
 
 int main()
 {
-    SocketMatTransmissionClient socketMat;
 	if (socketMat.socketConnect(COMP_IP, 6666) < 0)
-	{
 		return 0;
-	}
 	
 
-    int width, height;
-    cv::Mat frame; 
-    cv::Mat* dframe;
     type = SHIFT;
     std::string window = "window";
     cv::VideoCapture vid(0); 
@@ -60,7 +69,9 @@ int main()
 
     // spawn the IPC socket thread
     pthread_t ipcHandler;
+    pthread_t ethernetHandler;
     pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
+    //pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
 
     while(1)
     {
@@ -70,9 +81,23 @@ int main()
         mtx.lock();
         dis[type]->run(dframe);
         mtx.unlock();
+        cv::imshow(window, *dframe);
+        //mtxEth.lock();
+        //im_flag = 1;
+        //mtxEth.unlock();
         socketMat.transmit(*dframe);
-        // cv::imshow(window, *dframe);
-        // cv::waitKey(1);
+        cv::waitKey(1);
+
+        /*  - place Ethernet TX in a new thread
+            - H264 compression
+            struct packet{
+                Mat* cFrame // corrupted frame
+                Mat* frame  // uncorrupted frame
+                int Id      // id of the frames
+            }
+            - Send image dimensions
+        */
+    
     }
 
     return 0; 
@@ -187,8 +212,19 @@ void checkFrame(cv::Mat &frame)
     }
 }
 
-
-
+// Migrate h264 codec compression to here
+void *handleEthernet(void *threadid)
+{
+    while(1)
+    {
+        mtxEth.lock();
+        if(im_flag == 1){
+            socketMat.transmit(*dframe);
+            im_flag &= 0;
+        }
+        mtxEth.unlock();
+    }
+}
 
 
 
