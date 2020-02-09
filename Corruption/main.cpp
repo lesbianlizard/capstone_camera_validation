@@ -10,6 +10,7 @@
 #include <unistd.h> 
 #include <stdio.h> 
 #include <pthread.h>  
+#include <cstdlib>  
 #include <mutex>     
 #include <sched.h>
 #include <zmq.hpp>    
@@ -19,47 +20,54 @@
 #include "Freeze.hpp"
 #include "White.hpp"
 #include "Translate.hpp"
-#include "Socket.h"
+#include "PracticalSocket.h"   
+#include "config.h"
+#include "Compare.hpp"
 
 // my IP, moose1 "192.168.1.122"
 
 #define COMP_IP "192.168.1.124"
 #define ETHERNET true
+
 enum distortion{FREEZE, WHITE, SHIFT};
-std::mutex mtx;
-std::mutex mtxEth;
-std::condition_variable flag;
-std::queue<cv::Mat*> myqueue;
-
-std::vector<Distortion*> dis(3);
-SocketMatTransmissionClient socketMat;
 enum distortion type;
-int width, height;
-cv::Mat frame; 
-cv::Mat* dframe;
-uint8_t im_flag = 0;
+std::mutex mtx;
+cv::Mat* dframe;  // of type CV_8UC3
+std::vector<Distortion*> dis(3);
 
-void setup(cv::VideoCapture &vid, int &width, int &height);
 void *handleIPC(void *threadid);
 void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
-void checkFrame(cv::Mat &frame);
+std::string GetMatType(const cv::Mat* mat);
+bool isWhite(cv::Mat* dframe);
+bool isCorrupt(cv::Mat* dframe, cv::Mat *dup);
+bool isCorrupt2(cv::Mat* dframe, cv::Mat dup);
 
-int main()
-{
-	if (socketMat.socketConnect(COMP_IP, 6666) < 0)
-		return 0;
+
+// uint8_t im_flag = 0;
+// SocketMatTransmissionClient socketMat;
+// std::mutex mtxEth;
+// std::condition_variable flag;
+// std::queue<cv::Mat*> myqueue;
+
+int main(int argc, char * argv[]) {
+    if ((argc < 3) || (argc > 3)) { // Test for correct number of arguments
+        cerr << "Usage: " << argv[0] << " <Server> <Server Port>\n";
+        exit(1);
+    }
+
+    string servAddress = argv[1]; // First arg: server address
+    unsigned short servPort = Socket::resolveService(argv[2], "udp");
 	
 
     type = SHIFT;
-    std::string window = "window";
-    cv::VideoCapture vid(0); 
-    
-    setup(vid, width, height);
-    
+    std::string window = "corrupt";
+    std::string window2 = "normal";
+        
     Freeze freeze(100);
-    White white(50, 255, height, width); 
-    Translate translate(50, height, width, 15, 15); 
+    White white(50, 255, FRAME_HEIGHT, FRAME_WIDTH); 
+    Translate translate(50, FRAME_HEIGHT, FRAME_WIDTH, 15, 15); 
+    Compare comparator;
 
     cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     
@@ -71,73 +79,77 @@ int main()
     pthread_t ipcHandler;
     pthread_t ethernetHandler;
     pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
-    //pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
+    // pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
 
-    while(1)
-    {
-        vid >> frame;  
-        checkFrame(frame);
-        dframe = &frame; 
-        mtx.lock();
-        dis[type]->run(dframe);
-        mtx.unlock();
-        cv::imshow(window, *dframe);
-        //mtxEth.lock();
-        //im_flag = 1;
-        //mtxEth.unlock();
-        socketMat.transmit(*dframe);
-        cv::waitKey(1);
+    try {
+        UDPSocket sock;
+        int jpegqual =  ENCODE_QUALITY; // Compression Parameter
 
-        /*  - place Ethernet TX in a new thread
-            - H264 compression
-            struct packet{
-                Mat* cFrame // corrupted frame
-                Mat* frame  // uncorrupted frame
-                int Id      // id of the frames
-            }
-            - Send image dimensions
-        */
-    
+        cv::Mat frame, dup, send;
+        cv:: Mat diff;
+
+        // Prepare required variables
+        cv::Point point;
+        cv::Mat correlation;
+        double max_val;
+
+
+        std::vector < uchar > encoded;
+        cv::VideoCapture cap(0); // Grab the camera
+        cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
+        if (!cap.isOpened()) {
+            cerr << "OpenCV Failed to open camera";
+            exit(1);
+        }
+
+        clock_t last_cycle = clock();
+        while (1) {
+            cap >> frame;
+            dup = frame.clone();
+            dframe = &frame; 
+            mtx.lock();
+            dis[type]->run(dframe);
+            mtx.unlock();
+
+            /*
+            if(dframe->size().width==0)continue; // simple integrity check; skip erroneous data...
+            resize(*dframe, send, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
+            std::vector < int > compression_params;
+            compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+            compression_params.push_back(jpegqual);
+
+            cv::imencode(".jpg", send, encoded, compression_params);
+            cv::imshow(window, send);
+            int total_pack = 1 + (encoded.size() - 1) / PACK_SIZE;
+
+            int ibuf[1];
+            ibuf[0] = total_pack;
+            sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
+
+            for (int i = 0; i < total_pack; i++)
+                sock.sendTo( & encoded[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+            */
+            
+            cv::imshow(window2, dup);
+            cv::imshow(window, *dframe);
+            cv::waitKey(FRAME_INTERVAL);
+            comparator.run(&dup, dframe);
+
+            /*
+            clock_t next_cycle = clock();
+            double duration = (next_cycle - last_cycle) / (double) CLOCKS_PER_SEC;
+            cout << "\teffective FPS:" << (1 / duration) << " \tkbps:" << (PACK_SIZE * total_pack / duration / 1024 * 8) << endl;
+            cout << next_cycle - last_cycle;
+            last_cycle = next_cycle;
+            */
+        }
+
+    } catch (SocketException & e) {
+        cerr << e.what() << endl;
+        exit(1);
     }
 
     return 0; 
-}
-
-
-
-
-void setup(cv::VideoCapture &vid, int &width, int &height)
-{
-    std::cout<< "--------- CORRUPTION UNIT DISTORTION PROGRAM ----------"<<std::endl;
-    int size_in;
-    if(!vid.isOpened())
-        return;
-
-    while(1){
-        std::cout << "Press 1: 640x480, 2: 1280x720, 3: 1920x1080" << std::endl;
-        std::cin >> size_in;
-        if(size_in == 1){
-            height = 480;
-            width = 640; 
-            std::cout << "640x480" << std::endl;
-            break;
-        }
-        else if(size_in == 2){
-            height = 720;
-            width = 1280;    
-            std::cout << "1280x720" << std::endl;
-            break;
-        }
-        else if(size_in == 3){
-            height = 1080;
-            width = 1920; 
-            std::cout << "1920x1080" << std::endl;
-            break; 
-        }
-    }
-
-    vid.set(cv::CAP_PROP_FRAME_WIDTH, width);
-    vid.set(cv::CAP_PROP_FRAME_HEIGHT, height); 
 }
 
 void *handleIPC(void *threadid)
@@ -203,16 +215,7 @@ void dispatch(std::vector<std::string> cmd)
     }
 }
 
-void checkFrame(cv::Mat &frame)
-{
-    if(frame.empty())
-    {
-        std::cout<<"EXIT";
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Migrate h264 codec compression to here
+/* Migrate h264 codec compression to here
 void *handleEthernet(void *threadid)
 {
     while(1)
@@ -225,6 +228,7 @@ void *handleEthernet(void *threadid)
         mtxEth.unlock();
     }
 }
+*/
 
 
 
@@ -232,3 +236,56 @@ void *handleEthernet(void *threadid)
 
 
 
+/*
+1.) Get comparison working and integrated
+2.) write uncorrupted and corrupted frames to struct
+3.) Serialize the struct
+4.) Get socket working with multiple serialized frames
+5.) second queue based thread for sendign over socket and serializing the data
+*/
+
+std::string GetMatType(const cv::Mat* mat)
+{
+    const int mtype = mat->type();
+
+    switch (mtype)
+    {
+    case CV_8UC1:  return "CV_8UC1";
+    case CV_8UC2:  return "CV_8UC2";
+    case CV_8UC3:  return "CV_8UC3";
+    case CV_8UC4:  return "CV_8UC4";
+
+    case CV_8SC1:  return "CV_8SC1";
+    case CV_8SC2:  return "CV_8SC2";
+    case CV_8SC3:  return "CV_8SC3";
+    case CV_8SC4:  return "CV_8SC4";
+
+    case CV_16UC1: return "CV_16UC1";
+    case CV_16UC2: return "CV_16UC2";
+    case CV_16UC3: return "CV_16UC3";
+    case CV_16UC4: return "CV_16UC4";
+
+    case CV_16SC1: return "CV_16SC1";
+    case CV_16SC2: return "CV_16SC2";
+    case CV_16SC3: return "CV_16SC3";
+    case CV_16SC4: return "CV_16SC4";
+
+    case CV_32SC1: return "CV_32SC1";
+    case CV_32SC2: return "CV_32SC2";
+    case CV_32SC3: return "CV_32SC3";
+    case CV_32SC4: return "CV_32SC4";
+
+    case CV_32FC1: return "CV_32FC1";
+    case CV_32FC2: return "CV_32FC2";
+    case CV_32FC3: return "CV_32FC3";
+    case CV_32FC4: return "CV_32FC4";
+
+    case CV_64FC1: return "CV_64FC1";
+    case CV_64FC2: return "CV_64FC2";
+    case CV_64FC3: return "CV_64FC3";
+    case CV_64FC4: return "CV_64FC4";
+
+    default:
+        return "Invalid type of matrix!";
+    }
+}

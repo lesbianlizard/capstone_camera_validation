@@ -123,6 +123,33 @@ corrupt/fast:
 	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/build
 .PHONY : corrupt/fast
 
+Compare.o: Compare.cpp.o
+
+.PHONY : Compare.o
+
+# target to build an object file
+Compare.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Compare.cpp.o
+.PHONY : Compare.cpp.o
+
+Compare.i: Compare.cpp.i
+
+.PHONY : Compare.i
+
+# target to preprocess a source file
+Compare.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Compare.cpp.i
+.PHONY : Compare.cpp.i
+
+Compare.s: Compare.cpp.s
+
+.PHONY : Compare.s
+
+# target to generate assembly for a file
+Compare.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Compare.cpp.s
+.PHONY : Compare.cpp.s
+
 Distortion.o: Distortion.cpp.o
 
 .PHONY : Distortion.o
@@ -177,32 +204,32 @@ Freeze.cpp.s:
 	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.s
 .PHONY : Freeze.cpp.s
 
-Socket.o: Socket.cpp.o
+PracticalSocket.o: PracticalSocket.cpp.o
 
-.PHONY : Socket.o
+.PHONY : PracticalSocket.o
 
 # target to build an object file
-Socket.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Socket.cpp.o
-.PHONY : Socket.cpp.o
+PracticalSocket.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.o
+.PHONY : PracticalSocket.cpp.o
 
-Socket.i: Socket.cpp.i
+PracticalSocket.i: PracticalSocket.cpp.i
 
-.PHONY : Socket.i
+.PHONY : PracticalSocket.i
 
 # target to preprocess a source file
-Socket.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Socket.cpp.i
-.PHONY : Socket.cpp.i
+PracticalSocket.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.i
+.PHONY : PracticalSocket.cpp.i
 
-Socket.s: Socket.cpp.s
+PracticalSocket.s: PracticalSocket.cpp.s
 
-.PHONY : Socket.s
+.PHONY : PracticalSocket.s
 
 # target to generate assembly for a file
-Socket.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Socket.cpp.s
-.PHONY : Socket.cpp.s
+PracticalSocket.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.s
+.PHONY : PracticalSocket.cpp.s
 
 Translate.o: Translate.cpp.o
 
@@ -294,15 +321,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... corrupt"
 	@echo "... edit_cache"
+	@echo "... Compare.o"
+	@echo "... Compare.i"
+	@echo "... Compare.s"
 	@echo "... Distortion.o"
 	@echo "... Distortion.i"
 	@echo "... Distortion.s"
 	@echo "... Freeze.o"
 	@echo "... Freeze.i"
 	@echo "... Freeze.s"
-	@echo "... Socket.o"
-	@echo "... Socket.i"
-	@echo "... Socket.s"
+	@echo "... PracticalSocket.o"
+	@echo "... PracticalSocket.i"
+	@echo "... PracticalSocket.s"
 	@echo "... Translate.o"
 	@echo "... Translate.i"
 	@echo "... Translate.s"
