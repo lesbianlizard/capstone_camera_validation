@@ -48,8 +48,6 @@ void dispatch(std::vector<std::string> cmd);
 // std::condition_variable flag;
 // std::queue<cv::Mat*> myqueue;
 
-
-
 int main(int argc, char * argv[]) {
     if ((argc < 3) || (argc > 3)) { // Test for correct number of arguments
         cerr << "Usage: " << argv[0] << " <Server> <Server Port>\n";
@@ -61,7 +59,6 @@ int main(int argc, char * argv[]) {
     std::string servAddress = argv[1]; // First arg: server address
     unsigned short servPort = Socket::resolveService(argv[2], "tcp");
     std::vector <uchar> compImg;         
-
 
     type = SHIFT;
     std::string window = "corrupt";
@@ -90,7 +87,6 @@ int main(int argc, char * argv[]) {
 
         cv::Mat frame, dup;
         cv::Mat cp1, cp2;
-        std::vector <uchar> encode; 
         cv::VideoCapture cap(0); // Grab the camera
         cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
         if (!cap.isOpened()) {
@@ -112,14 +108,14 @@ int main(int argc, char * argv[]) {
             //resize(dup, cp2, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
 
 
-
+            // ends work performed by this thread, push readied frame packet to queue for ethernet thread
 
             std::vector <int> compression_params;
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
+            cv::imencode(".jpg", dup, compImg, compression_params);
+            cv::imencode(".jpg", *dframe, compImg, compression_params);
 
-            //cv::imencode(".jpg", dup, encode, compression_params);
-            cv::imencode(".jpg", *dframe, encode, compression_params);
 
 std::string dat; 
 cv::Mat raw; 
@@ -129,10 +125,10 @@ FramePacket packet;
 packet.set_rows(dframe->rows);
 packet.set_cols(dframe->cols);
 packet.set_elt_type(dframe->type());
-packet.set_elt_size(encode.size());
+packet.set_elt_size(compImg.size());
 
 // set the matrix's raw data
-packet.set_mat_dataa(encode.data(), encode.size());
+packet.set_mat_dataa(compImg.data(), compImg.size());
 
   if (packet.SerializeToString(&dat)) {
       if(packet.ParseFromString(dat)){
@@ -160,12 +156,12 @@ packet.set_mat_dataa(encode.data(), encode.size());
 
 
 
-            int total_pack = 1 + (encode.size() - 1) / PACK_SIZE;
+            int total_pack = 1 + (compImg.size() - 1) / PACK_SIZE;
             int ibuf[1];
             ibuf[0] = total_pack;
             sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
             for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & encode[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+                sock.sendTo( & compImg[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
 
         cv::waitKey(FRAME_INTERVAL);
             /*
