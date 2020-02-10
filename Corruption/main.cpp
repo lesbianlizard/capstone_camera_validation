@@ -1,7 +1,6 @@
-
 /*************************************************
 * Corruption Unit OPENCV Program
-* Contributors: Kamron Ebrahimi, Aaron Walder, Pu Huang
+* Contributors: Kamron Ebrahimi
 ************************************************/
 
 #include <stdio.h>
@@ -16,18 +15,28 @@
 #include <zmq.hpp>    
 #include <queue>  
 #include <condition_variable>
-#include "Distortion.hpp"
-#include "Freeze.hpp"
-#include "White.hpp"
-#include "Translate.hpp"
-#include "PracticalSocket.h"   
-#include "config.h"
+#include "filters/Distortion.hpp"
+#include "filters/Freeze.hpp"
+#include "filters/White.hpp"
+#include "filters/Translate.hpp"
+#include "socket/PracticalSocket.h"   
+#include "socket/config.h"
 #include "Compare.hpp"
+#include "proto/packet.pb.h"
+
+using image::Image;
+
+typedef struct FrameSync{
+    uint32_t sizeA;
+    uint32_t sizeB;
+    std::vector <uchar> compImgA;         
+    std::vector <uchar> compImgB;         
+} FrameSync;
 
 // my IP, moose1 "192.168.1.122"
-
-#define COMP_IP "192.168.1.124"
-#define ETHERNET true
+// build prtocol buffer libraries from template .proto file 
+// protoc -I=./ --cpp_out=./proto ./packet.proto
+// ./corrupt 192.168.1.124 6666
 
 enum distortion{FREEZE, WHITE, SHIFT};
 enum distortion type;
@@ -38,11 +47,8 @@ std::vector<Distortion*> dis(3);
 void *handleIPC(void *threadid);
 void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
-std::string GetMatType(const cv::Mat* mat);
-bool isWhite(cv::Mat* dframe);
-bool isCorrupt(cv::Mat* dframe, cv::Mat *dup);
-bool isCorrupt2(cv::Mat* dframe, cv::Mat dup);
-
+int getPacketSize(FrameSync* packet);
+int setPacketSize(FrameSync* packet);
 
 // uint8_t im_flag = 0;
 // SocketMatTransmissionClient socketMat;
@@ -50,15 +56,20 @@ bool isCorrupt2(cv::Mat* dframe, cv::Mat dup);
 // std::condition_variable flag;
 // std::queue<cv::Mat*> myqueue;
 
+
+
 int main(int argc, char * argv[]) {
     if ((argc < 3) || (argc > 3)) { // Test for correct number of arguments
         cerr << "Usage: " << argv[0] << " <Server> <Server Port>\n";
         exit(1);
     }
 
-    string servAddress = argv[1]; // First arg: server address
-    unsigned short servPort = Socket::resolveService(argv[2], "udp");
-	
+
+
+    std::string servAddress = argv[1]; // First arg: server address
+    unsigned short servPort = Socket::resolveService(argv[2], "tcp");
+    std::vector <uchar> compImg;         
+
 
     type = SHIFT;
     std::string window = "corrupt";
@@ -85,16 +96,9 @@ int main(int argc, char * argv[]) {
         UDPSocket sock;
         int jpegqual =  ENCODE_QUALITY; // Compression Parameter
 
-        cv::Mat frame, dup, send;
-        cv:: Mat diff;
-
-        // Prepare required variables
-        cv::Point point;
-        cv::Mat correlation;
-        double max_val;
-
-
-        std::vector < uchar > encoded;
+        cv::Mat frame, dup;
+        cv::Mat cp1, cp2;
+        FrameSync packet;
         cv::VideoCapture cap(0); // Grab the camera
         cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
         if (!cap.isOpened()) {
@@ -102,7 +106,7 @@ int main(int argc, char * argv[]) {
             exit(1);
         }
 
-        clock_t last_cycle = clock();
+        //clock_t last_cycle = clock();
         while (1) {
             cap >> frame;
             dup = frame.clone();
@@ -111,40 +115,92 @@ int main(int argc, char * argv[]) {
             dis[type]->run(dframe);
             mtx.unlock();
 
-            /*
-            if(dframe->size().width==0)continue; // simple integrity check; skip erroneous data...
-            resize(*dframe, send, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
-            std::vector < int > compression_params;
+            //if(dframe->size().width==0)continue; // simple integrity check; skip errosneous data...
+            //resize(*dframe, cp1, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
+            //resize(dup, cp2, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
+
+
+
+
+            std::vector <int> compression_params;
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
 
-            cv::imencode(".jpg", send, encoded, compression_params);
-            cv::imshow(window, send);
-            int total_pack = 1 + (encoded.size() - 1) / PACK_SIZE;
+            cv::imencode(".jpg", dup, packet.compImgA, compression_params);
+            cv::imencode(".jpg", *dframe, packet.compImgB, compression_params);
 
+
+             // Store into protobuf
+             
+  std::string dat; 
+  cv::Mat newFrame; 
+  Image image;
+//set the trivial fields
+image.set_rows(dframe->rows);
+image.set_cols(dframe->cols);
+image.set_elt_type(dframe->type());
+image.set_elt_size((int)dframe->elemSize());
+
+//set the matrix's raw data
+size_t dataSize = dframe->rows * dframe->cols * dframe->elemSize();
+image.set_mat_data(dframe->data, dataSize);
+
+  if (image.SerializeToString(&dat)) {
+      if(image.ParseFromString(dat)){
+          
+
+        //allocate the matrix
+        newFrame.create(image.rows(),
+        image.cols(),
+        image.elt_type());
+
+        //set the matrix's data
+        size_t dataSize = image.rows() *  image.cols() * image.elt_size();
+
+        std::copy(reinterpret_cast<unsigned char *>(
+            const_cast<char *>(image.mat_data().data())),
+        reinterpret_cast<unsigned char *>(
+            const_cast<char *>(image.mat_data().data()) + dataSize),
+        newFrame.data);
+
+
+        cv::imshow(window, newFrame);
+
+      }
+  }
+
+/*
+          newMat.data = (uchar*)image.data().c_str();
+          newMat.cols = (int)image.width();
+          newMat.rows = (int)image.height();
+          newMat.channels = (int)image.channel();
+
+
+  */
+
+            // serialize packet
+            // get the length
+            // send it over the socket
+
+
+
+            int total_pack = 1 + (packet.compImgB.size() - 1) / PACK_SIZE;
             int ibuf[1];
             ibuf[0] = total_pack;
             sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
-
             for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & encoded[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
-            */
-            
+                sock.sendTo( & packet.compImgB[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+
+cv::waitKey(FRAME_INTERVAL);
+            /*
             cv::imshow(window2, dup);
             cv::imshow(window, *dframe);
-            cv::waitKey(FRAME_INTERVAL);
+            
             comparator.run(&dup, dframe);
-
-            /*
-            clock_t next_cycle = clock();
-            double duration = (next_cycle - last_cycle) / (double) CLOCKS_PER_SEC;
-            cout << "\teffective FPS:" << (1 / duration) << " \tkbps:" << (PACK_SIZE * total_pack / duration / 1024 * 8) << endl;
-            cout << next_cycle - last_cycle;
-            last_cycle = next_cycle;
             */
         }
 
-    } catch (SocketException & e) {
+    }catch (SocketException & e) {
         cerr << e.what() << endl;
         exit(1);
     }
@@ -215,6 +271,19 @@ void dispatch(std::vector<std::string> cmd)
     }
 }
 
+
+int setPacketSize(FrameSync* packet)
+{
+    packet->sizeA = packet->compImgA.size();
+    packet->sizeB = packet->compImgB.size();
+}
+
+int getPacketSize(FrameSync* packet)
+{
+    return packet->sizeA + packet->sizeB;
+}
+
+
 /* Migrate h264 codec compression to here
 void *handleEthernet(void *threadid)
 {
@@ -233,59 +302,10 @@ void *handleEthernet(void *threadid)
 
 
 
-
-
-
-/*
-1.) Get comparison working and integrated
-2.) write uncorrupted and corrupted frames to struct
-3.) Serialize the struct
-4.) Get socket working with multiple serialized frames
-5.) second queue based thread for sendign over socket and serializing the data
-*/
-
-std::string GetMatType(const cv::Mat* mat)
-{
-    const int mtype = mat->type();
-
-    switch (mtype)
-    {
-    case CV_8UC1:  return "CV_8UC1";
-    case CV_8UC2:  return "CV_8UC2";
-    case CV_8UC3:  return "CV_8UC3";
-    case CV_8UC4:  return "CV_8UC4";
-
-    case CV_8SC1:  return "CV_8SC1";
-    case CV_8SC2:  return "CV_8SC2";
-    case CV_8SC3:  return "CV_8SC3";
-    case CV_8SC4:  return "CV_8SC4";
-
-    case CV_16UC1: return "CV_16UC1";
-    case CV_16UC2: return "CV_16UC2";
-    case CV_16UC3: return "CV_16UC3";
-    case CV_16UC4: return "CV_16UC4";
-
-    case CV_16SC1: return "CV_16SC1";
-    case CV_16SC2: return "CV_16SC2";
-    case CV_16SC3: return "CV_16SC3";
-    case CV_16SC4: return "CV_16SC4";
-
-    case CV_32SC1: return "CV_32SC1";
-    case CV_32SC2: return "CV_32SC2";
-    case CV_32SC3: return "CV_32SC3";
-    case CV_32SC4: return "CV_32SC4";
-
-    case CV_32FC1: return "CV_32FC1";
-    case CV_32FC2: return "CV_32FC2";
-    case CV_32FC3: return "CV_32FC3";
-    case CV_32FC4: return "CV_32FC4";
-
-    case CV_64FC1: return "CV_64FC1";
-    case CV_64FC2: return "CV_64FC2";
-    case CV_64FC3: return "CV_64FC3";
-    case CV_64FC4: return "CV_64FC4";
-
-    default:
-        return "Invalid type of matrix!";
-    }
-}
+            /*
+            clock_t next_cycle = clock();
+            double duration = (next_cycle - last_cycle) / (double) CLOCKS_PER_SEC;
+            cout << "\teffective FPS:" << (1 / duration) << " \tkbps:" << (PACK_SIZE * total_pack / duration / 1024 * 8) << endl;
+            cout << next_cycle - last_cycle;
+            last_cycle = next_cycle;
+            */

@@ -150,140 +150,113 @@ Compare.cpp.s:
 	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Compare.cpp.s
 .PHONY : Compare.cpp.s
 
-Distortion.o: Distortion.cpp.o
+filters/Distortion.o: filters/Distortion.cpp.o
 
-.PHONY : Distortion.o
-
-# target to build an object file
-Distortion.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.o
-.PHONY : Distortion.cpp.o
-
-Distortion.i: Distortion.cpp.i
-
-.PHONY : Distortion.i
-
-# target to preprocess a source file
-Distortion.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.i
-.PHONY : Distortion.cpp.i
-
-Distortion.s: Distortion.cpp.s
-
-.PHONY : Distortion.s
-
-# target to generate assembly for a file
-Distortion.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Distortion.cpp.s
-.PHONY : Distortion.cpp.s
-
-Freeze.o: Freeze.cpp.o
-
-.PHONY : Freeze.o
+.PHONY : filters/Distortion.o
 
 # target to build an object file
-Freeze.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.o
-.PHONY : Freeze.cpp.o
+filters/Distortion.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Distortion.cpp.o
+.PHONY : filters/Distortion.cpp.o
 
-Freeze.i: Freeze.cpp.i
+filters/Distortion.i: filters/Distortion.cpp.i
 
-.PHONY : Freeze.i
+.PHONY : filters/Distortion.i
 
 # target to preprocess a source file
-Freeze.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.i
-.PHONY : Freeze.cpp.i
+filters/Distortion.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Distortion.cpp.i
+.PHONY : filters/Distortion.cpp.i
 
-Freeze.s: Freeze.cpp.s
+filters/Distortion.s: filters/Distortion.cpp.s
 
-.PHONY : Freeze.s
+.PHONY : filters/Distortion.s
 
 # target to generate assembly for a file
-Freeze.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Freeze.cpp.s
-.PHONY : Freeze.cpp.s
+filters/Distortion.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Distortion.cpp.s
+.PHONY : filters/Distortion.cpp.s
 
-PracticalSocket.o: PracticalSocket.cpp.o
+filters/Freeze.o: filters/Freeze.cpp.o
 
-.PHONY : PracticalSocket.o
+.PHONY : filters/Freeze.o
 
 # target to build an object file
-PracticalSocket.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.o
-.PHONY : PracticalSocket.cpp.o
+filters/Freeze.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Freeze.cpp.o
+.PHONY : filters/Freeze.cpp.o
 
-PracticalSocket.i: PracticalSocket.cpp.i
+filters/Freeze.i: filters/Freeze.cpp.i
 
-.PHONY : PracticalSocket.i
+.PHONY : filters/Freeze.i
 
 # target to preprocess a source file
-PracticalSocket.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.i
-.PHONY : PracticalSocket.cpp.i
+filters/Freeze.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Freeze.cpp.i
+.PHONY : filters/Freeze.cpp.i
 
-PracticalSocket.s: PracticalSocket.cpp.s
+filters/Freeze.s: filters/Freeze.cpp.s
 
-.PHONY : PracticalSocket.s
+.PHONY : filters/Freeze.s
 
 # target to generate assembly for a file
-PracticalSocket.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/PracticalSocket.cpp.s
-.PHONY : PracticalSocket.cpp.s
+filters/Freeze.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Freeze.cpp.s
+.PHONY : filters/Freeze.cpp.s
 
-Translate.o: Translate.cpp.o
+filters/Translate.o: filters/Translate.cpp.o
 
-.PHONY : Translate.o
+.PHONY : filters/Translate.o
 
 # target to build an object file
-Translate.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.o
-.PHONY : Translate.cpp.o
+filters/Translate.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Translate.cpp.o
+.PHONY : filters/Translate.cpp.o
 
-Translate.i: Translate.cpp.i
+filters/Translate.i: filters/Translate.cpp.i
 
-.PHONY : Translate.i
+.PHONY : filters/Translate.i
 
 # target to preprocess a source file
-Translate.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.i
-.PHONY : Translate.cpp.i
+filters/Translate.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Translate.cpp.i
+.PHONY : filters/Translate.cpp.i
 
-Translate.s: Translate.cpp.s
+filters/Translate.s: filters/Translate.cpp.s
 
-.PHONY : Translate.s
+.PHONY : filters/Translate.s
 
 # target to generate assembly for a file
-Translate.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/Translate.cpp.s
-.PHONY : Translate.cpp.s
+filters/Translate.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/Translate.cpp.s
+.PHONY : filters/Translate.cpp.s
 
-White.o: White.cpp.o
+filters/White.o: filters/White.cpp.o
 
-.PHONY : White.o
+.PHONY : filters/White.o
 
 # target to build an object file
-White.cpp.o:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.o
-.PHONY : White.cpp.o
+filters/White.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/White.cpp.o
+.PHONY : filters/White.cpp.o
 
-White.i: White.cpp.i
+filters/White.i: filters/White.cpp.i
 
-.PHONY : White.i
+.PHONY : filters/White.i
 
 # target to preprocess a source file
-White.cpp.i:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.i
-.PHONY : White.cpp.i
+filters/White.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/White.cpp.i
+.PHONY : filters/White.cpp.i
 
-White.s: White.cpp.s
+filters/White.s: filters/White.cpp.s
 
-.PHONY : White.s
+.PHONY : filters/White.s
 
 # target to generate assembly for a file
-White.cpp.s:
-	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/White.cpp.s
-.PHONY : White.cpp.s
+filters/White.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/filters/White.cpp.s
+.PHONY : filters/White.cpp.s
 
 main.o: main.cpp.o
 
@@ -312,6 +285,60 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+proto/packet.pb.o: proto/packet.pb.cc.o
+
+.PHONY : proto/packet.pb.o
+
+# target to build an object file
+proto/packet.pb.cc.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/proto/packet.pb.cc.o
+.PHONY : proto/packet.pb.cc.o
+
+proto/packet.pb.i: proto/packet.pb.cc.i
+
+.PHONY : proto/packet.pb.i
+
+# target to preprocess a source file
+proto/packet.pb.cc.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/proto/packet.pb.cc.i
+.PHONY : proto/packet.pb.cc.i
+
+proto/packet.pb.s: proto/packet.pb.cc.s
+
+.PHONY : proto/packet.pb.s
+
+# target to generate assembly for a file
+proto/packet.pb.cc.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/proto/packet.pb.cc.s
+.PHONY : proto/packet.pb.cc.s
+
+socket/PracticalSocket.o: socket/PracticalSocket.cpp.o
+
+.PHONY : socket/PracticalSocket.o
+
+# target to build an object file
+socket/PracticalSocket.cpp.o:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/socket/PracticalSocket.cpp.o
+.PHONY : socket/PracticalSocket.cpp.o
+
+socket/PracticalSocket.i: socket/PracticalSocket.cpp.i
+
+.PHONY : socket/PracticalSocket.i
+
+# target to preprocess a source file
+socket/PracticalSocket.cpp.i:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/socket/PracticalSocket.cpp.i
+.PHONY : socket/PracticalSocket.cpp.i
+
+socket/PracticalSocket.s: socket/PracticalSocket.cpp.s
+
+.PHONY : socket/PracticalSocket.s
+
+# target to generate assembly for a file
+socket/PracticalSocket.cpp.s:
+	$(MAKE) -f CMakeFiles/corrupt.dir/build.make CMakeFiles/corrupt.dir/socket/PracticalSocket.cpp.s
+.PHONY : socket/PracticalSocket.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -324,24 +351,27 @@ help:
 	@echo "... Compare.o"
 	@echo "... Compare.i"
 	@echo "... Compare.s"
-	@echo "... Distortion.o"
-	@echo "... Distortion.i"
-	@echo "... Distortion.s"
-	@echo "... Freeze.o"
-	@echo "... Freeze.i"
-	@echo "... Freeze.s"
-	@echo "... PracticalSocket.o"
-	@echo "... PracticalSocket.i"
-	@echo "... PracticalSocket.s"
-	@echo "... Translate.o"
-	@echo "... Translate.i"
-	@echo "... Translate.s"
-	@echo "... White.o"
-	@echo "... White.i"
-	@echo "... White.s"
+	@echo "... filters/Distortion.o"
+	@echo "... filters/Distortion.i"
+	@echo "... filters/Distortion.s"
+	@echo "... filters/Freeze.o"
+	@echo "... filters/Freeze.i"
+	@echo "... filters/Freeze.s"
+	@echo "... filters/Translate.o"
+	@echo "... filters/Translate.i"
+	@echo "... filters/Translate.s"
+	@echo "... filters/White.o"
+	@echo "... filters/White.i"
+	@echo "... filters/White.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... proto/packet.pb.o"
+	@echo "... proto/packet.pb.i"
+	@echo "... proto/packet.pb.s"
+	@echo "... socket/PracticalSocket.o"
+	@echo "... socket/PracticalSocket.i"
+	@echo "... socket/PracticalSocket.s"
 .PHONY : help
 
 
