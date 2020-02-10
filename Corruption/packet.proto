@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-package image;
+package packet;
 
-message Image  {
+message FramePacket {
     int32 rows = 1;
     int32 cols = 2;
     int32 elt_type = 3;
     int32 elt_size = 4;
-    bytes mat_data = 5;
+    bytes mat_dataA = 5;
+    bytes mat_dataB = 6;
 }

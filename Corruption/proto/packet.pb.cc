@@ -14,25 +14,25 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
-namespace image {
-class ImageDefaultTypeInternal {
+namespace packet {
+class FramePacketDefaultTypeInternal {
  public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Image> _instance;
-} _Image_default_instance_;
-}  // namespace image
-static void InitDefaultsscc_info_Image_packet_2eproto() {
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<FramePacket> _instance;
+} _FramePacket_default_instance_;
+}  // namespace packet
+static void InitDefaultsscc_info_FramePacket_packet_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::image::_Image_default_instance_;
-    new (ptr) ::image::Image();
+    void* ptr = &::packet::_FramePacket_default_instance_;
+    new (ptr) ::packet::FramePacket();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::image::Image::InitAsDefaultInstance();
+  ::packet::FramePacket::InitAsDefaultInstance();
 }
 
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Image_packet_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Image_packet_2eproto}, {}};
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_FramePacket_packet_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_FramePacket_packet_2eproto}, {}};
 
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_packet_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_packet_2eproto = nullptr;
@@ -40,38 +40,40 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_s
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_packet_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::image::Image, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::image::Image, rows_),
-  PROTOBUF_FIELD_OFFSET(::image::Image, cols_),
-  PROTOBUF_FIELD_OFFSET(::image::Image, elt_type_),
-  PROTOBUF_FIELD_OFFSET(::image::Image, elt_size_),
-  PROTOBUF_FIELD_OFFSET(::image::Image, mat_data_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, rows_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, cols_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_type_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_size_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_dataa_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_datab_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::image::Image)},
+  { 0, -1, sizeof(::packet::FramePacket)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::image::_Image_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::packet::_FramePacket_default_instance_),
 };
 
 const char descriptor_table_protodef_packet_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014packet.proto\022\005image\"Y\n\005Image\022\014\n\004rows\030\001"
-  " \001(\005\022\014\n\004cols\030\002 \001(\005\022\020\n\010elt_type\030\003 \001(\005\022\020\n\010"
-  "elt_size\030\004 \001(\005\022\020\n\010mat_data\030\005 \001(\014b\006proto3"
+  "\n\014packet.proto\022\006packet\"s\n\013FramePacket\022\014\n"
+  "\004rows\030\001 \001(\005\022\014\n\004cols\030\002 \001(\005\022\020\n\010elt_type\030\003 "
+  "\001(\005\022\020\n\010elt_size\030\004 \001(\005\022\021\n\tmat_dataA\030\005 \001(\014"
+  "\022\021\n\tmat_dataB\030\006 \001(\014b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_packet_2eproto_deps[1] = {
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_packet_2eproto_sccs[1] = {
-  &scc_info_Image_packet_2eproto.base,
+  &scc_info_FramePacket_packet_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_packet_2eproto_once;
 static bool descriptor_table_packet_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_packet_2eproto = {
-  &descriptor_table_packet_2eproto_initialized, descriptor_table_protodef_packet_2eproto, "packet.proto", 120,
+  &descriptor_table_packet_2eproto_initialized, descriptor_table_protodef_packet_2eproto, "packet.proto", 147,
   &descriptor_table_packet_2eproto_once, descriptor_table_packet_2eproto_sccs, descriptor_table_packet_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_packet_2eproto::offsets,
   file_level_metadata_packet_2eproto, 1, file_level_enum_descriptors_packet_2eproto, file_level_service_descriptors_packet_2eproto,
@@ -79,75 +81,82 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_packet
 
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_packet_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_packet_2eproto)), true);
-namespace image {
+namespace packet {
 
 // ===================================================================
 
-void Image::InitAsDefaultInstance() {
+void FramePacket::InitAsDefaultInstance() {
 }
-class Image::_Internal {
+class FramePacket::_Internal {
  public:
 };
 
-Image::Image()
+FramePacket::FramePacket()
   : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:image.Image)
+  // @@protoc_insertion_point(constructor:packet.FramePacket)
 }
-Image::Image(const Image& from)
+FramePacket::FramePacket(const FramePacket& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  mat_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_mat_data().empty()) {
-    mat_data_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_data_);
+  mat_dataa_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_mat_dataa().empty()) {
+    mat_dataa_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_dataa_);
+  }
+  mat_datab_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_mat_datab().empty()) {
+    mat_datab_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_datab_);
   }
   ::memcpy(&rows_, &from.rows_,
     static_cast<size_t>(reinterpret_cast<char*>(&elt_size_) -
     reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
-  // @@protoc_insertion_point(copy_constructor:image.Image)
+  // @@protoc_insertion_point(copy_constructor:packet.FramePacket)
 }
 
-void Image::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Image_packet_2eproto.base);
-  mat_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+void FramePacket::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_FramePacket_packet_2eproto.base);
+  mat_dataa_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mat_datab_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&rows_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&elt_size_) -
       reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
 }
 
-Image::~Image() {
-  // @@protoc_insertion_point(destructor:image.Image)
+FramePacket::~FramePacket() {
+  // @@protoc_insertion_point(destructor:packet.FramePacket)
   SharedDtor();
 }
 
-void Image::SharedDtor() {
-  mat_data_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+void FramePacket::SharedDtor() {
+  mat_dataa_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mat_datab_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void Image::SetCachedSize(int size) const {
+void FramePacket::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const Image& Image::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Image_packet_2eproto.base);
+const FramePacket& FramePacket::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_FramePacket_packet_2eproto.base);
   return *internal_default_instance();
 }
 
 
-void Image::Clear() {
-// @@protoc_insertion_point(message_clear_start:image.Image)
+void FramePacket::Clear() {
+// @@protoc_insertion_point(message_clear_start:packet.FramePacket)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  mat_data_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mat_dataa_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  mat_datab_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&rows_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&elt_size_) -
       reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
   _internal_metadata_.Clear();
 }
 
-const char* Image::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* FramePacket::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
@@ -182,10 +191,18 @@ const char* Image::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::inte
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // bytes mat_data = 5;
+      // bytes mat_dataA = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
-          auto str = _internal_mutable_mat_data();
+          auto str = _internal_mutable_mat_dataa();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bytes mat_dataB = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_mat_datab();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -210,9 +227,9 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* Image::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* FramePacket::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:image.Image)
+  // @@protoc_insertion_point(serialize_to_array_start:packet.FramePacket)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -240,33 +257,46 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_elt_size(), target);
   }
 
-  // bytes mat_data = 5;
-  if (this->mat_data().size() > 0) {
+  // bytes mat_dataA = 5;
+  if (this->mat_dataa().size() > 0) {
     target = stream->WriteBytesMaybeAliased(
-        5, this->_internal_mat_data(), target);
+        5, this->_internal_mat_dataa(), target);
+  }
+
+  // bytes mat_dataB = 6;
+  if (this->mat_datab().size() > 0) {
+    target = stream->WriteBytesMaybeAliased(
+        6, this->_internal_mat_datab(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:image.Image)
+  // @@protoc_insertion_point(serialize_to_array_end:packet.FramePacket)
   return target;
 }
 
-size_t Image::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:image.Image)
+size_t FramePacket::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:packet.FramePacket)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // bytes mat_data = 5;
-  if (this->mat_data().size() > 0) {
+  // bytes mat_dataA = 5;
+  if (this->mat_dataa().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
-        this->_internal_mat_data());
+        this->_internal_mat_dataa());
+  }
+
+  // bytes mat_dataB = 6;
+  if (this->mat_datab().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_mat_datab());
   }
 
   // int32 rows = 1;
@@ -306,31 +336,35 @@ size_t Image::ByteSizeLong() const {
   return total_size;
 }
 
-void Image::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:image.Image)
+void FramePacket::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:packet.FramePacket)
   GOOGLE_DCHECK_NE(&from, this);
-  const Image* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Image>(
+  const FramePacket* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<FramePacket>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:image.Image)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:packet.FramePacket)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:image.Image)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:packet.FramePacket)
     MergeFrom(*source);
   }
 }
 
-void Image::MergeFrom(const Image& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:image.Image)
+void FramePacket::MergeFrom(const FramePacket& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:packet.FramePacket)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.mat_data().size() > 0) {
+  if (from.mat_dataa().size() > 0) {
 
-    mat_data_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_data_);
+    mat_dataa_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_dataa_);
+  }
+  if (from.mat_datab().size() > 0) {
+
+    mat_datab_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_datab_);
   }
   if (from.rows() != 0) {
     _internal_set_rows(from._internal_rows());
@@ -346,28 +380,30 @@ void Image::MergeFrom(const Image& from) {
   }
 }
 
-void Image::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:image.Image)
+void FramePacket::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:packet.FramePacket)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Image::CopyFrom(const Image& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:image.Image)
+void FramePacket::CopyFrom(const FramePacket& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:packet.FramePacket)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Image::IsInitialized() const {
+bool FramePacket::IsInitialized() const {
   return true;
 }
 
-void Image::InternalSwap(Image* other) {
+void FramePacket::InternalSwap(FramePacket* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  mat_data_.Swap(&other->mat_data_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  mat_dataa_.Swap(&other->mat_dataa_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  mat_datab_.Swap(&other->mat_datab_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(rows_, other->rows_);
   swap(cols_, other->cols_);
@@ -375,16 +411,16 @@ void Image::InternalSwap(Image* other) {
   swap(elt_size_, other->elt_size_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata Image::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata FramePacket::GetMetadata() const {
   return GetMetadataStatic();
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace image
+}  // namespace packet
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::image::Image* Arena::CreateMaybeMessage< ::image::Image >(Arena* arena) {
-  return Arena::CreateInternal< ::image::Image >(arena);
+template<> PROTOBUF_NOINLINE ::packet::FramePacket* Arena::CreateMaybeMessage< ::packet::FramePacket >(Arena* arena) {
+  return Arena::CreateInternal< ::packet::FramePacket >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

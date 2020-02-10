@@ -24,14 +24,8 @@
 #include "Compare.hpp"
 #include "proto/packet.pb.h"
 
-using image::Image;
+using packet::FramePacket;
 
-typedef struct FrameSync{
-    uint32_t sizeA;
-    uint32_t sizeB;
-    std::vector <uchar> compImgA;         
-    std::vector <uchar> compImgB;         
-} FrameSync;
 
 // my IP, moose1 "192.168.1.122"
 // build prtocol buffer libraries from template .proto file 
@@ -47,8 +41,6 @@ std::vector<Distortion*> dis(3);
 void *handleIPC(void *threadid);
 void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
-int getPacketSize(FrameSync* packet);
-int setPacketSize(FrameSync* packet);
 
 // uint8_t im_flag = 0;
 // SocketMatTransmissionClient socketMat;
@@ -98,7 +90,7 @@ int main(int argc, char * argv[]) {
 
         cv::Mat frame, dup;
         cv::Mat cp1, cp2;
-        FrameSync packet;
+        std::vector <uchar> encode; 
         cv::VideoCapture cap(0); // Grab the camera
         cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
         if (!cap.isOpened()) {
@@ -126,72 +118,56 @@ int main(int argc, char * argv[]) {
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
 
-            cv::imencode(".jpg", dup, packet.compImgA, compression_params);
-            cv::imencode(".jpg", *dframe, packet.compImgB, compression_params);
+            cv::imencode(".jpg", dup, encode, compression_params);
+            cv::imencode(".jpg", *dframe, encode, compression_params);
 
 
              // Store into protobuf
              
   std::string dat; 
   cv::Mat newFrame; 
-  Image image;
-//set the trivial fields
-image.set_rows(dframe->rows);
-image.set_cols(dframe->cols);
-image.set_elt_type(dframe->type());
-image.set_elt_size((int)dframe->elemSize());
+  FramePacket packet;
+// set the trivial fields
+packet.set_rows(dframe->rows);
+packet.set_cols(dframe->cols);
+packet.set_elt_type(dframe->type());
+packet.set_elt_size((int)dframe->elemSize());
 
-//set the matrix's raw data
+// set the matrix's raw data
 size_t dataSize = dframe->rows * dframe->cols * dframe->elemSize();
-image.set_mat_data(dframe->data, dataSize);
+packet.set_mat_dataa(dframe->data, dataSize);
 
-  if (image.SerializeToString(&dat)) {
-      if(image.ParseFromString(dat)){
+  if (packet.SerializeToString(&dat)) {
+      if(packet.ParseFromString(dat)){
           
 
         //allocate the matrix
-        newFrame.create(image.rows(),
-        image.cols(),
-        image.elt_type());
+        newFrame.create(packet.rows(),
+        packet.cols(),
+        packet.elt_type());
 
         //set the matrix's data
-        size_t dataSize = image.rows() *  image.cols() * image.elt_size();
+        size_t dataSize = packet.rows() *  packet.cols() * packet.elt_size();
 
         std::copy(reinterpret_cast<unsigned char *>(
-            const_cast<char *>(image.mat_data().data())),
-        reinterpret_cast<unsigned char *>(
-            const_cast<char *>(image.mat_data().data()) + dataSize),
-        newFrame.data);
-
+            const_cast<char *>(packet.mat_dataa().data())),
+            reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data()) + dataSize),
+            newFrame.data);
 
         cv::imshow(window, newFrame);
 
       }
   }
 
-/*
-          newMat.data = (uchar*)image.data().c_str();
-          newMat.cols = (int)image.width();
-          newMat.rows = (int)image.height();
-          newMat.channels = (int)image.channel();
-
-
-  */
-
-            // serialize packet
-            // get the length
-            // send it over the socket
-
-
-
-            int total_pack = 1 + (packet.compImgB.size() - 1) / PACK_SIZE;
+            int total_pack = 1 + (encode.size() - 1) / PACK_SIZE;
             int ibuf[1];
             ibuf[0] = total_pack;
             sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
             for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & packet.compImgB[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+                sock.sendTo( & encode[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
 
-cv::waitKey(FRAME_INTERVAL);
+        cv::waitKey(FRAME_INTERVAL);
             /*
             cv::imshow(window2, dup);
             cv::imshow(window, *dframe);
@@ -269,18 +245,6 @@ void dispatch(std::vector<std::string> cmd)
             dis[type]->update(cmd);
             break;
     }
-}
-
-
-int setPacketSize(FrameSync* packet)
-{
-    packet->sizeA = packet->compImgA.size();
-    packet->sizeB = packet->compImgB.size();
-}
-
-int getPacketSize(FrameSync* packet)
-{
-    return packet->sizeA + packet->sizeB;
 }
 
 
