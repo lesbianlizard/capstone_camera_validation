@@ -118,47 +118,47 @@ int main(int argc, char * argv[]) {
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
 
-            cv::imencode(".jpg", dup, encode, compression_params);
+            //cv::imencode(".jpg", dup, encode, compression_params);
             cv::imencode(".jpg", *dframe, encode, compression_params);
 
+std::string dat; 
+cv::Mat raw; 
+FramePacket packet;
 
-             // Store into protobuf
-             
-  std::string dat; 
-  cv::Mat newFrame; 
-  FramePacket packet;
 // set the trivial fields
 packet.set_rows(dframe->rows);
 packet.set_cols(dframe->cols);
 packet.set_elt_type(dframe->type());
-packet.set_elt_size((int)dframe->elemSize());
+packet.set_elt_size(encode.size());
 
 // set the matrix's raw data
-size_t dataSize = dframe->rows * dframe->cols * dframe->elemSize();
-packet.set_mat_dataa(dframe->data, dataSize);
+packet.set_mat_dataa(encode.data(), encode.size());
 
   if (packet.SerializeToString(&dat)) {
       if(packet.ParseFromString(dat)){
           
 
         //allocate the matrix
-        newFrame.create(packet.rows(),
-        packet.cols(),
-        packet.elt_type());
+        raw.create(packet.rows(), packet.cols(), packet.elt_type());
+
 
         //set the matrix's data
-        size_t dataSize = packet.rows() *  packet.cols() * packet.elt_size();
-
         std::copy(reinterpret_cast<unsigned char *>(
             const_cast<char *>(packet.mat_dataa().data())),
             reinterpret_cast<unsigned char *>(
-            const_cast<char *>(packet.mat_dataa().data()) + dataSize),
-            newFrame.data);
+            const_cast<char *>(packet.mat_dataa().data()) + packet.elt_size()),
+            raw.data);
 
-        cv::imshow(window, newFrame);
-
+        // decompress the image
+        cv::Mat frame = imdecode(raw, cv::IMREAD_COLOR);
+        cv::imshow(window, frame);
       }
   }
+
+
+
+
+
 
             int total_pack = 1 + (encode.size() - 1) / PACK_SIZE;
             int ibuf[1];
@@ -273,3 +273,42 @@ void *handleEthernet(void *threadid)
             cout << next_cycle - last_cycle;
             last_cycle = next_cycle;
             */
+
+
+            /*      
+  std::string dat; 
+  cv::Mat newFrame; 
+  FramePacket packet;
+// set the trivial fields
+packet.set_rows(dframe->rows);
+packet.set_cols(dframe->cols);
+packet.set_elt_type(dframe->type());
+packet.set_elt_size((int)dframe->elemSize());
+
+// set the matrix's raw data
+size_t dataSize = dframe->rows * dframe->cols * dframe->elemSize();
+packet.set_mat_dataa(dframe->data, dataSize);
+
+  if (packet.SerializeToString(&dat)) {
+      if(packet.ParseFromString(dat)){
+          
+
+        //allocate the matrix
+        newFrame.create(packet.rows(),
+        packet.cols(),
+        packet.elt_type());
+
+        //set the matrix's data
+        size_t dataSize = packet.rows() *  packet.cols() * packet.elt_size();
+
+        std::copy(reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data())),
+            reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data()) + dataSize),
+            newFrame.data);
+
+        cv::imshow(window, newFrame);
+
+      }
+  }
+*/
