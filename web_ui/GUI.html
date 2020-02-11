@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<title>GUI</title>
+<head>
+    <h1>Welcome to GUI website!</h1>
+</head>
+<body>
+    <!-
+    Format (use .join(',') method on a dynamically constructed list object) to produce these commands
+    Freeze:   ['1', 't/f', 'dur(ms)']
+    White:    ['2', 't/f', 'dur(ms)', 'shade(0-255)']
+    Translate ['3', 't/f', 'dur(ms)', 'x_offset', 'y_offset']
+    ->
+    <h2>Please choose the variable to submit.</h2>
+    <div class="option1"></div>
+        <p>Freeze<select name="FreezeNumber">
+            <option value="1">1</option>
+        </select>
+        <select name="FreezeCommand">
+            <option value="t">t</option>
+            <option value="f">f</option>
+        </select>
+        <input type="number" name="FTime" placeholder="input freeze time (ms)">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;">
+        </p>
+        <br>
+    <div class="option2"></div>
+        <p>White<select name="WhiteNumber">
+            <option value="2">2</option>
+        </select>
+        <select name="WhiteCommand">
+            <option value="t">t</option>
+            <option value="f">f</option>
+        </select>
+        <input type="number" name="WTime" placeholder="input white time (ms)">
+        <input type="number" name="shade" placeholder="input shade (0-255)">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;">
+        </p>
+        <br>
+    <div class="option3"><div>
+        <p>Translate<select name="TranslateNumber">
+            <option value="3">3</option>
+        </select>
+        <select name="TranslateCommand">
+            <option value="t">t</option>
+            <option value="f">f</option>
+        </select>
+        <input type="number" name="TTime" placeholder="input Translate time (ms)">
+        <input type="number" name="x_offset" placeholder="input x_offset">
+        <input type="number" name="y_offset" placeholder="input y_offset">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;">
+        </p>
+
+<script src="bundle.js"></script>
+
+        <script src="gui.js"></script>
+</html>
