@@ -1,8 +1,19 @@
+//var cors = require('cors');
 var http = require('http');
-var server = http.createServer ( function(request,response){
+var server = http.createServer (
+function(request,response)
+{
+  //response.writeHead(200,{"Content-Type":"text\plain"});
+  response.setHeader('Access-Control-Allow-Origin', '*');
 
-  response.writeHead(200,{"Content-Type":"text\plain"});
-  if(request.method == "GET")
+  if (request.method == "OPTIONS")
+  {
+    response.writeHead(200);
+    response.end();
+    console.log("recieved OPTIONS request");
+    return;
+  }
+  else if(request.method == "GET")
   {
     response.end("received GET request.")
     console.log("received GET request.")
@@ -17,6 +28,9 @@ var server = http.createServer ( function(request,response){
     response.end("Undefined request .");
   }
 });
+
+//server.options('*', cors());
+//server.use(cors())
 
 server.listen(8000);
 console.log("Server running on port 8000");
