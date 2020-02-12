@@ -5,13 +5,13 @@ host = "127.0.0.1"
 port = "5555"
 zmq_addr = "tcp://" + host + ":" + port
 
-async function run()
+async function zmq_send_data(browser_request)
 {
   const sock = new zmq.Request
 
   sock.connect(zmq_addr)
   console.log("ZMQ connected to " + zmq_addr)
-  sock.send("1,1,1,1")
+  sock.send(browser_request)
 
   message = sock.receive()
   console.log(message)
@@ -19,7 +19,7 @@ async function run()
   sock.disconnect(zmq_addr)
 }
 
-run()
+//run()
 
 var server = http.createServer (
 function(request,response)
@@ -42,8 +42,18 @@ function(request,response)
   }
   else if(request.method == "POST")
   {
-    response.end("received POST request.");
-    console.log("received POST request.")
+    var post_data = ""
+    request.on("data", function(data)
+    {
+      post_data += data
+      //console.log("Recieved partial data: " + data)
+    })
+    request.on("end", function()
+    {
+      console.log("received POST request with data: " + post_data);
+      zmq_send_data(post_data);
+    })
+    response.end("received POST request.")
   }
   else
   {
