@@ -1,5 +1,26 @@
 //var cors = require('cors');
 var http = require('http');
+const zmq = require("zeromq")
+host = "127.0.0.1"
+port = "5555"
+zmq_addr = "tcp://" + host + ":" + port
+
+async function run()
+{
+  const sock = new zmq.Request
+
+  sock.connect(zmq_addr)
+  console.log("ZMQ connected to " + zmq_addr)
+  sock.send("1,1,1,1")
+
+  message = sock.receive()
+  console.log(message)
+
+  sock.disconnect(zmq_addr)
+}
+
+run()
+
 var server = http.createServer (
 function(request,response)
 {
@@ -15,6 +36,7 @@ function(request,response)
   }
   else if(request.method == "GET")
   {
+    response.writeHead(200,{"Content-Type":"text\plain"});
     response.end("received GET request.")
     console.log("received GET request.")
   }
