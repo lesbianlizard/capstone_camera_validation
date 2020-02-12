@@ -70,5 +70,5 @@ function(request,response)
 //server.use(cors())
 
 server.listen(listen_port);
-console.log("Server running on port 8000");
+console.log("Server running on port" + listen_port);
 
