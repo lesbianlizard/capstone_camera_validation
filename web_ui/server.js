@@ -1,6 +1,11 @@
 //var cors = require('cors');
 var http = require('http');
 const zmq = require("zeromq")
+
+// This script listens for HTTP POST requests on localhost at this port:
+listen_port = 8000
+
+// These variables control the ZMQ server this script connects to
 host = "127.0.0.1"
 port = "5555"
 zmq_addr = "tcp://" + host + ":" + port
@@ -53,7 +58,7 @@ function(request,response)
       console.log("received POST request with data: " + post_data);
       zmq_send_data(post_data);
     })
-    response.end("received POST request.")
+    response.end("<html>received POST request.</html>")
   }
   else
   {
@@ -64,6 +69,6 @@ function(request,response)
 //server.options('*', cors());
 //server.use(cors())
 
-server.listen(8000);
+server.listen(listen_port);
 console.log("Server running on port 8000");
 
