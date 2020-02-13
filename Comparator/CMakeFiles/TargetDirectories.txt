@@ -1,0 +1,3 @@
+/home/pi/Code/capstone_camera_validation/Comparator/CMakeFiles/rebuild_cache.dir
+/home/pi/Code/capstone_camera_validation/Comparator/CMakeFiles/compare.dir
+/home/pi/Code/capstone_camera_validation/Comparator/CMakeFiles/edit_cache.dir
