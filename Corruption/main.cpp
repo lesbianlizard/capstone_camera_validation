@@ -55,10 +55,12 @@ int main(int argc, char * argv[]) {
     }
 
 
-
     std::string servAddress = argv[1]; // First arg: server address
-    unsigned short servPort = Socket::resolveService(argv[2], "tcp");
-    std::vector <uchar> compImg;         
+    //unsigned short servPort = Socket::resolveService(argv[2], "udp");      
+
+
+    TCPSocket sock(servAddress, atoi(argv[2]));
+
 
     type = SHIFT;
     std::string window = "corrupt";
@@ -82,13 +84,16 @@ int main(int argc, char * argv[]) {
     // pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
 
     try {
-        UDPSocket sock;
+        //UDPSocket sock;
+        
+
         int jpegqual =  ENCODE_QUALITY; // Compression Parameter
 
         cv::Mat frame, dup;
-        cv::Mat cp1, cp2;
+        //cv::Mat cp1, cp2;
+
+
         cv::VideoCapture cap(0); // Grab the camera
-        cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
         if (!cap.isOpened()) {
             cerr << "OpenCV Failed to open camera";
             exit(1);
@@ -107,70 +112,110 @@ int main(int argc, char * argv[]) {
             //resize(*dframe, cp1, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
             //resize(dup, cp2, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
 
-
-            // ends work performed by this thread, push readied frame packet to queue for ethernet thread
-
+            // compress the frames
+            std::vector <uchar> compImgA, compImgB;   
             std::vector <int> compression_params;
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
-            cv::imencode(".jpg", dup, compImg, compression_params);
-            cv::imencode(".jpg", *dframe, compImg, compression_params);
+            cv::imencode(".jpg", dup, compImgA, compression_params);
+            cv::imencode(".jpg", *dframe, compImgB, compression_params);
+
+            // EVERYTHING PAST HERE MUST BE DONE BY A THIRD THREAD
+            // I am not going to recompile everything on the  second pi, copy SD card
 
 
-std::string dat; 
-cv::Mat raw; 
-FramePacket packet;
+            // init the packet
+            FramePacket packet;
+            std::string serial_dat;
+            packet.set_rows(dframe->rows);
+            packet.set_cols(dframe->cols);
+            packet.set_elt_type(dframe->type());
+            packet.set_elt_size(compImgA.size());
+            packet.set_mat_dataa(compImgA.data(), compImgA.size());
+            packet.set_mat_datab(compImgB.data(), compImgB.size());
 
-// set the trivial fields
-packet.set_rows(dframe->rows);
-packet.set_cols(dframe->cols);
-packet.set_elt_type(dframe->type());
-packet.set_elt_size(compImg.size());
-
-// set the matrix's raw data
-packet.set_mat_dataa(compImg.data(), compImg.size());
-
-  if (packet.SerializeToString(&dat)) {
-      if(packet.ParseFromString(dat)){
-          
-
-        //allocate the matrix
-        raw.create(packet.rows(), packet.cols(), packet.elt_type());
+            // serialize the packet
+            if (!packet.SerializeToString(&serial_dat))
+                std::cout<< "failed to serialize data" <<std::endl;
 
 
-        //set the matrix's data
-        std::copy(reinterpret_cast<unsigned char *>(
-            const_cast<char *>(packet.mat_dataa().data())),
-            reinterpret_cast<unsigned char *>(
-            const_cast<char *>(packet.mat_dataa().data()) + packet.elt_size()),
-            raw.data);
+/*
+            // send the serialized packet over the tcp connection
 
-        // decompress the image
-        cv::Mat frame = imdecode(raw, cv::IMREAD_COLOR);
-        cv::imshow(window, frame);
-      }
-  }
+
+            int total_pack = 1 + (serial_dat.size()- 1) / PACK_SIZE;
 
 
 
+            // std::string test = "hello there my name is kamron";
+            // int total_pack = 1 + (test.size()- 1) / PACK_SIZE;
+
+            std::cout << "dat size: " << serial_dat.size() <<std::endl;
+            std::cout << "total packets: " << total_pack <<std::endl;
 
 
+            int ibuf[1];
+            ibuf[0] = total_pack;
+            //sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
+            sock.send(ibuf , sizeof(int));  
 
-            int total_pack = 1 + (compImg.size() - 1) / PACK_SIZE;
+
+            for (int i = 0; i < total_pack; i++){
+                serial_dat[i*PACK_SIZE] = 'S';
+                serial_dat[i*PACK_SIZE+1] = 'T';
+                serial_dat[i*PACK_SIZE+2] = 'A';
+                serial_dat[i*PACK_SIZE+3] = 'R';
+                serial_dat[i*PACK_SIZE+4] = 'T';
+    
+                serial_dat[i*PACK_SIZE + PACK_SIZE-1] = 'D';
+                serial_dat[i*PACK_SIZE + PACK_SIZE-2] = 'N';
+                serial_dat[i*PACK_SIZE + PACK_SIZE-3] = 'E';
+
+                //sock.sendTo( & serial_dat[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+                sock.send(& serial_dat[i * PACK_SIZE], PACK_SIZE); 
+                std::cout << "-------------------------- SIZE: " << serial_dat.substr(i*PACK_SIZE, PACK_SIZE).size() <<std::endl; 
+                std::cout << "-------------------------- DATA: " << serial_dat.substr(i*PACK_SIZE, PACK_SIZE) <<std::endl; 
+            } 
+            serial_dat.clear(); //I might not need this
+            */
+/*
+
+            int total_pack = 1 + (compImgA.size()- 1) / PACK_SIZE;
             int ibuf[1];
             ibuf[0] = total_pack;
             sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
             for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & compImg[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
+                sock.sendTo( & compImgA[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
 
-        cv::waitKey(FRAME_INTERVAL);
+            // update the image monitor
+            // cv::waitKey(FRAME_INTERVAL);
+*/
+
+
+            int total_pack = 1 + (serial_dat.size()- 1) / PACK_SIZE;
+            int ibuf[1];
+            ibuf[0] = serial_dat.size();
+            std::cout << "sending " << serial_dat.size() << std::endl; 
+            sock.send(ibuf , sizeof(int));
+            for (int i = 0; i < total_pack; i++)
+                sock.send( & serial_dat[i * PACK_SIZE], PACK_SIZE);
+
+
+            // int total_pack = 1 + (compImgA.size()- 1) / PACK_SIZE;
+            // int ibuf[1];
+            // ibuf[0] = compImgA.size();
+            // std::cout << "sending " << compImgA.size() << std::endl; 
+            // sock.send(ibuf , sizeof(int));
+            // for (int i = 0; i < total_pack; i++)
+            //     sock.send( & compImgA[i * PACK_SIZE], PACK_SIZE);
+
+
             /*
             cv::imshow(window2, dup);
             cv::imshow(window, *dframe);
-            
             comparator.run(&dup, dframe);
-            */
-        }
+            cv::waitKey(FRAME_INTERVAL);
+        */}
 
     }catch (SocketException & e) {
         cerr << e.what() << endl;
@@ -307,4 +352,44 @@ packet.set_mat_dataa(dframe->data, dataSize);
 
       }
   }
+
+
+
+
+
+
+std::string dat; 
+cv::Mat raw; 
+FramePacket packet;
+
+// set the trivial fields
+packet.set_rows(dframe->rows);
+packet.set_cols(dframe->cols);
+packet.set_elt_type(dframe->type());
+packet.set_elt_size(compImg.size());
+
+// set the matrix's raw data
+packet.set_mat_dataa(compImg.data(), compImg.size());
+
+  if (packet.SerializeToString(&dat)) {
+      if(packet.ParseFromString(dat)){
+          
+
+        //allocate the matrix
+        raw.create(packet.rows(), packet.cols(), packet.elt_type());
+
+
+        //set the matrix's data
+        std::copy(reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data())),
+            reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data()) + packet.elt_size()),
+            raw.data);
+
+        // decompress the image
+        cv::Mat frame = imdecode(raw, cv::IMREAD_COLOR);
+        cv::imshow(window, frame);
+      }
+  }
+
 */
