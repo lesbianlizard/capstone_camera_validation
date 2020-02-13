@@ -47,9 +47,12 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_packet_2eproto::offsets[] PROT
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, rows_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, cols_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_type_),
-  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_size_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_sizea_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, rowsb_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, colsb_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_dataa_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_datab_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_sizeb_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::packet::FramePacket)},
@@ -60,10 +63,11 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_packet_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014packet.proto\022\006packet\"s\n\013FramePacket\022\014\n"
-  "\004rows\030\001 \001(\005\022\014\n\004cols\030\002 \001(\005\022\020\n\010elt_type\030\003 "
-  "\001(\005\022\020\n\010elt_size\030\004 \001(\005\022\021\n\tmat_dataA\030\005 \001(\014"
-  "\022\021\n\tmat_dataB\030\006 \001(\014b\006proto3"
+  "\n\014packet.proto\022\006packet\"\245\001\n\013FramePacket\022\014"
+  "\n\004rows\030\001 \001(\005\022\014\n\004cols\030\002 \001(\005\022\020\n\010elt_type\030\003"
+  " \001(\005\022\021\n\telt_sizea\030\004 \001(\005\022\r\n\005rowsb\030\010 \001(\005\022\r"
+  "\n\005colsb\030\t \001(\005\022\021\n\tmat_dataA\030\005 \001(\014\022\021\n\tmat_"
+  "dataB\030\006 \001(\014\022\021\n\telt_sizeb\030\007 \001(\005b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_packet_2eproto_deps[1] = {
 };
@@ -73,7 +77,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_pac
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_packet_2eproto_once;
 static bool descriptor_table_packet_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_packet_2eproto = {
-  &descriptor_table_packet_2eproto_initialized, descriptor_table_protodef_packet_2eproto, "packet.proto", 147,
+  &descriptor_table_packet_2eproto_initialized, descriptor_table_protodef_packet_2eproto, "packet.proto", 198,
   &descriptor_table_packet_2eproto_once, descriptor_table_packet_2eproto_sccs, descriptor_table_packet_2eproto_deps, 1, 0,
   schemas, file_default_instances, TableStruct_packet_2eproto::offsets,
   file_level_metadata_packet_2eproto, 1, file_level_enum_descriptors_packet_2eproto, file_level_service_descriptors_packet_2eproto,
@@ -109,8 +113,8 @@ FramePacket::FramePacket(const FramePacket& from)
     mat_datab_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.mat_datab_);
   }
   ::memcpy(&rows_, &from.rows_,
-    static_cast<size_t>(reinterpret_cast<char*>(&elt_size_) -
-    reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
+    static_cast<size_t>(reinterpret_cast<char*>(&colsb_) -
+    reinterpret_cast<char*>(&rows_)) + sizeof(colsb_));
   // @@protoc_insertion_point(copy_constructor:packet.FramePacket)
 }
 
@@ -119,8 +123,8 @@ void FramePacket::SharedCtor() {
   mat_dataa_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   mat_datab_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&rows_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&elt_size_) -
-      reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
+      reinterpret_cast<char*>(&colsb_) -
+      reinterpret_cast<char*>(&rows_)) + sizeof(colsb_));
 }
 
 FramePacket::~FramePacket() {
@@ -151,8 +155,8 @@ void FramePacket::Clear() {
   mat_dataa_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   mat_datab_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&rows_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&elt_size_) -
-      reinterpret_cast<char*>(&rows_)) + sizeof(elt_size_));
+      reinterpret_cast<char*>(&colsb_) -
+      reinterpret_cast<char*>(&rows_)) + sizeof(colsb_));
   _internal_metadata_.Clear();
 }
 
@@ -184,10 +188,10 @@ const char* FramePacket::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int32 elt_size = 4;
+      // int32 elt_sizea = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
-          elt_size_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          elt_sizea_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -204,6 +208,27 @@ const char* FramePacket::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
           auto str = _internal_mutable_mat_datab();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 elt_sizeb = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
+          elt_sizeb_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 rowsb = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          rowsb_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 colsb = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+          colsb_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -251,10 +276,10 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_elt_type(), target);
   }
 
-  // int32 elt_size = 4;
-  if (this->elt_size() != 0) {
+  // int32 elt_sizea = 4;
+  if (this->elt_sizea() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_elt_size(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_elt_sizea(), target);
   }
 
   // bytes mat_dataA = 5;
@@ -267,6 +292,24 @@ failure:
   if (this->mat_datab().size() > 0) {
     target = stream->WriteBytesMaybeAliased(
         6, this->_internal_mat_datab(), target);
+  }
+
+  // int32 elt_sizeb = 7;
+  if (this->elt_sizeb() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_elt_sizeb(), target);
+  }
+
+  // int32 rowsb = 8;
+  if (this->rowsb() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(8, this->_internal_rowsb(), target);
+  }
+
+  // int32 colsb = 9;
+  if (this->colsb() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(9, this->_internal_colsb(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -320,11 +363,32 @@ size_t FramePacket::ByteSizeLong() const {
         this->_internal_elt_type());
   }
 
-  // int32 elt_size = 4;
-  if (this->elt_size() != 0) {
+  // int32 elt_sizea = 4;
+  if (this->elt_sizea() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_elt_size());
+        this->_internal_elt_sizea());
+  }
+
+  // int32 elt_sizeb = 7;
+  if (this->elt_sizeb() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_elt_sizeb());
+  }
+
+  // int32 rowsb = 8;
+  if (this->rowsb() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_rowsb());
+  }
+
+  // int32 colsb = 9;
+  if (this->colsb() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_colsb());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -375,8 +439,17 @@ void FramePacket::MergeFrom(const FramePacket& from) {
   if (from.elt_type() != 0) {
     _internal_set_elt_type(from._internal_elt_type());
   }
-  if (from.elt_size() != 0) {
-    _internal_set_elt_size(from._internal_elt_size());
+  if (from.elt_sizea() != 0) {
+    _internal_set_elt_sizea(from._internal_elt_sizea());
+  }
+  if (from.elt_sizeb() != 0) {
+    _internal_set_elt_sizeb(from._internal_elt_sizeb());
+  }
+  if (from.rowsb() != 0) {
+    _internal_set_rowsb(from._internal_rowsb());
+  }
+  if (from.colsb() != 0) {
+    _internal_set_colsb(from._internal_colsb());
   }
 }
 
@@ -408,7 +481,10 @@ void FramePacket::InternalSwap(FramePacket* other) {
   swap(rows_, other->rows_);
   swap(cols_, other->cols_);
   swap(elt_type_, other->elt_type_);
-  swap(elt_size_, other->elt_size_);
+  swap(elt_sizea_, other->elt_sizea_);
+  swap(elt_sizeb_, other->elt_sizeb_);
+  swap(rowsb_, other->rowsb_);
+  swap(colsb_, other->colsb_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FramePacket::GetMetadata() const {

@@ -42,25 +42,14 @@ void *handleIPC(void *threadid);
 void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
 
-// uint8_t im_flag = 0;
-// SocketMatTransmissionClient socketMat;
-// std::mutex mtxEth;
-// std::condition_variable flag;
-// std::queue<cv::Mat*> myqueue;
-
 int main(int argc, char * argv[]) {
     if ((argc < 3) || (argc > 3)) { // Test for correct number of arguments
         cerr << "Usage: " << argv[0] << " <Server> <Server Port>\n";
         exit(1);
     }
 
-
     std::string servAddress = argv[1]; // First arg: server address
-    //unsigned short servPort = Socket::resolveService(argv[2], "udp");      
-
-
     TCPSocket sock(servAddress, atoi(argv[2]));
-
 
     type = SHIFT;
     std::string window = "corrupt";
@@ -70,8 +59,6 @@ int main(int argc, char * argv[]) {
     White white(50, 255, FRAME_HEIGHT, FRAME_WIDTH); 
     Translate translate(50, FRAME_HEIGHT, FRAME_WIDTH, 15, 15); 
     Compare comparator;
-
-    cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     
     dis[0] = &freeze;
     dis[1] = &white;
@@ -79,19 +66,14 @@ int main(int argc, char * argv[]) {
 
     // spawn the IPC socket thread
     pthread_t ipcHandler;
-    pthread_t ethernetHandler;
+    // pthread_t ethernetHandler;
     pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
     // pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
 
     try {
-        //UDPSocket sock;
-        
-
         int jpegqual =  ENCODE_QUALITY; // Compression Parameter
 
-        cv::Mat frame, dup;
-        //cv::Mat cp1, cp2;
-
+        cv::Mat frame, dup, cp1, cp2; 
 
         cv::VideoCapture cap(0); // Grab the camera
         if (!cap.isOpened()) {
@@ -120,77 +102,22 @@ int main(int argc, char * argv[]) {
             cv::imencode(".jpg", dup, compImgA, compression_params);
             cv::imencode(".jpg", *dframe, compImgB, compression_params);
 
-            // EVERYTHING PAST HERE MUST BE DONE BY A THIRD THREAD
-            // I am not going to recompile everything on the  second pi, copy SD card
-
-
             // init the packet
             FramePacket packet;
             std::string serial_dat;
-            packet.set_rows(dframe->rows);
-            packet.set_cols(dframe->cols);
+            packet.set_rows(dup.rows);
+            packet.set_cols(dup.cols);
+            packet.set_rowsb(dframe->rows);
+            packet.set_colsb(dframe->cols);
             packet.set_elt_type(dframe->type());
-            packet.set_elt_size(compImgA.size());
+            packet.set_elt_sizea(compImgA.size());
+            packet.set_elt_sizeb(compImgB.size());
             packet.set_mat_dataa(compImgA.data(), compImgA.size());
             packet.set_mat_datab(compImgB.data(), compImgB.size());
 
-            // serialize the packet
+            // serialize the packet 
             if (!packet.SerializeToString(&serial_dat))
                 std::cout<< "failed to serialize data" <<std::endl;
-
-
-/*
-            // send the serialized packet over the tcp connection
-
-
-            int total_pack = 1 + (serial_dat.size()- 1) / PACK_SIZE;
-
-
-
-            // std::string test = "hello there my name is kamron";
-            // int total_pack = 1 + (test.size()- 1) / PACK_SIZE;
-
-            std::cout << "dat size: " << serial_dat.size() <<std::endl;
-            std::cout << "total packets: " << total_pack <<std::endl;
-
-
-            int ibuf[1];
-            ibuf[0] = total_pack;
-            //sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
-            sock.send(ibuf , sizeof(int));  
-
-
-            for (int i = 0; i < total_pack; i++){
-                serial_dat[i*PACK_SIZE] = 'S';
-                serial_dat[i*PACK_SIZE+1] = 'T';
-                serial_dat[i*PACK_SIZE+2] = 'A';
-                serial_dat[i*PACK_SIZE+3] = 'R';
-                serial_dat[i*PACK_SIZE+4] = 'T';
-    
-                serial_dat[i*PACK_SIZE + PACK_SIZE-1] = 'D';
-                serial_dat[i*PACK_SIZE + PACK_SIZE-2] = 'N';
-                serial_dat[i*PACK_SIZE + PACK_SIZE-3] = 'E';
-
-                //sock.sendTo( & serial_dat[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
-                sock.send(& serial_dat[i * PACK_SIZE], PACK_SIZE); 
-                std::cout << "-------------------------- SIZE: " << serial_dat.substr(i*PACK_SIZE, PACK_SIZE).size() <<std::endl; 
-                std::cout << "-------------------------- DATA: " << serial_dat.substr(i*PACK_SIZE, PACK_SIZE) <<std::endl; 
-            } 
-            serial_dat.clear(); //I might not need this
-            */
-/*
-
-            int total_pack = 1 + (compImgA.size()- 1) / PACK_SIZE;
-            int ibuf[1];
-            ibuf[0] = total_pack;
-            sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
-            for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & compImgA[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
-
-            // update the image monitor
-            // cv::waitKey(FRAME_INTERVAL);
-*/
-
 
             int total_pack = 1 + (serial_dat.size()- 1) / PACK_SIZE;
             int ibuf[1];
@@ -199,23 +126,7 @@ int main(int argc, char * argv[]) {
             sock.send(ibuf , sizeof(int));
             for (int i = 0; i < total_pack; i++)
                 sock.send( & serial_dat[i * PACK_SIZE], PACK_SIZE);
-
-
-            // int total_pack = 1 + (compImgA.size()- 1) / PACK_SIZE;
-            // int ibuf[1];
-            // ibuf[0] = compImgA.size();
-            // std::cout << "sending " << compImgA.size() << std::endl; 
-            // sock.send(ibuf , sizeof(int));
-            // for (int i = 0; i < total_pack; i++)
-            //     sock.send( & compImgA[i * PACK_SIZE], PACK_SIZE);
-
-
-            /*
-            cv::imshow(window2, dup);
-            cv::imshow(window, *dframe);
-            comparator.run(&dup, dframe);
-            cv::waitKey(FRAME_INTERVAL);
-        */}
+        }
 
     }catch (SocketException & e) {
         cerr << e.what() << endl;
