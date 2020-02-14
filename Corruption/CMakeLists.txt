@@ -26,6 +26,6 @@ add_executable( corrupt filters/Distortion.hpp filters/Distortion.cpp
                 filters/Translate.hpp filters/Translate.cpp 
                 Compare.hpp Compare.cpp 
                 socket/PracticalSocket.h socket/PracticalSocket.cpp 
-                proto/packet.pb.h proto/packet.pb.cc main.cpp)
+                proto/packet.pb.h proto/packet.pb.cc main_reed.cpp)
 
 target_link_libraries( corrupt ${OpenCV_LIBS}  ${ZeroMQ_LIBRARY} ${PROTOBUF_LIBRARIES} pthread)
