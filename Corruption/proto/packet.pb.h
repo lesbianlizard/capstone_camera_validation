@@ -177,7 +177,10 @@ class FramePacket :
     kRowsFieldNumber = 1,
     kColsFieldNumber = 2,
     kEltTypeFieldNumber = 3,
-    kEltSizeFieldNumber = 4,
+    kEltSizeaFieldNumber = 4,
+    kEltSizebFieldNumber = 7,
+    kRowsbFieldNumber = 8,
+    kColsbFieldNumber = 9,
   };
   // bytes mat_dataA = 5;
   void clear_mat_dataa();
@@ -238,13 +241,40 @@ class FramePacket :
   void _internal_set_elt_type(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 elt_size = 4;
-  void clear_elt_size();
-  ::PROTOBUF_NAMESPACE_ID::int32 elt_size() const;
-  void set_elt_size(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // int32 elt_sizea = 4;
+  void clear_elt_sizea();
+  ::PROTOBUF_NAMESPACE_ID::int32 elt_sizea() const;
+  void set_elt_sizea(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_elt_size() const;
-  void _internal_set_elt_size(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_elt_sizea() const;
+  void _internal_set_elt_sizea(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 elt_sizeb = 7;
+  void clear_elt_sizeb();
+  ::PROTOBUF_NAMESPACE_ID::int32 elt_sizeb() const;
+  void set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_elt_sizeb() const;
+  void _internal_set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 rowsb = 8;
+  void clear_rowsb();
+  ::PROTOBUF_NAMESPACE_ID::int32 rowsb() const;
+  void set_rowsb(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_rowsb() const;
+  void _internal_set_rowsb(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 colsb = 9;
+  void clear_colsb();
+  ::PROTOBUF_NAMESPACE_ID::int32 colsb() const;
+  void set_colsb(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_colsb() const;
+  void _internal_set_colsb(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:packet.FramePacket)
@@ -257,7 +287,10 @@ class FramePacket :
   ::PROTOBUF_NAMESPACE_ID::int32 rows_;
   ::PROTOBUF_NAMESPACE_ID::int32 cols_;
   ::PROTOBUF_NAMESPACE_ID::int32 elt_type_;
-  ::PROTOBUF_NAMESPACE_ID::int32 elt_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 elt_sizea_;
+  ::PROTOBUF_NAMESPACE_ID::int32 elt_sizeb_;
+  ::PROTOBUF_NAMESPACE_ID::int32 rowsb_;
+  ::PROTOBUF_NAMESPACE_ID::int32 colsb_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_packet_2eproto;
 };
@@ -332,24 +365,64 @@ inline void FramePacket::set_elt_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:packet.FramePacket.elt_type)
 }
 
-// int32 elt_size = 4;
-inline void FramePacket::clear_elt_size() {
-  elt_size_ = 0;
+// int32 elt_sizea = 4;
+inline void FramePacket::clear_elt_sizea() {
+  elt_sizea_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_elt_size() const {
-  return elt_size_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_elt_sizea() const {
+  return elt_sizea_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::elt_size() const {
-  // @@protoc_insertion_point(field_get:packet.FramePacket.elt_size)
-  return _internal_elt_size();
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::elt_sizea() const {
+  // @@protoc_insertion_point(field_get:packet.FramePacket.elt_sizea)
+  return _internal_elt_sizea();
 }
-inline void FramePacket::_internal_set_elt_size(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void FramePacket::_internal_set_elt_sizea(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  elt_size_ = value;
+  elt_sizea_ = value;
 }
-inline void FramePacket::set_elt_size(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_elt_size(value);
-  // @@protoc_insertion_point(field_set:packet.FramePacket.elt_size)
+inline void FramePacket::set_elt_sizea(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_elt_sizea(value);
+  // @@protoc_insertion_point(field_set:packet.FramePacket.elt_sizea)
+}
+
+// int32 rowsb = 8;
+inline void FramePacket::clear_rowsb() {
+  rowsb_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_rowsb() const {
+  return rowsb_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::rowsb() const {
+  // @@protoc_insertion_point(field_get:packet.FramePacket.rowsb)
+  return _internal_rowsb();
+}
+inline void FramePacket::_internal_set_rowsb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  rowsb_ = value;
+}
+inline void FramePacket::set_rowsb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_rowsb(value);
+  // @@protoc_insertion_point(field_set:packet.FramePacket.rowsb)
+}
+
+// int32 colsb = 9;
+inline void FramePacket::clear_colsb() {
+  colsb_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_colsb() const {
+  return colsb_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::colsb() const {
+  // @@protoc_insertion_point(field_get:packet.FramePacket.colsb)
+  return _internal_colsb();
+}
+inline void FramePacket::_internal_set_colsb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  colsb_ = value;
+}
+inline void FramePacket::set_colsb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_colsb(value);
+  // @@protoc_insertion_point(field_set:packet.FramePacket.colsb)
 }
 
 // bytes mat_dataA = 5;
@@ -470,6 +543,26 @@ inline void FramePacket::set_allocated_mat_datab(std::string* mat_datab) {
   }
   mat_datab_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), mat_datab);
   // @@protoc_insertion_point(field_set_allocated:packet.FramePacket.mat_dataB)
+}
+
+// int32 elt_sizeb = 7;
+inline void FramePacket::clear_elt_sizeb() {
+  elt_sizeb_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_elt_sizeb() const {
+  return elt_sizeb_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::elt_sizeb() const {
+  // @@protoc_insertion_point(field_get:packet.FramePacket.elt_sizeb)
+  return _internal_elt_sizeb();
+}
+inline void FramePacket::_internal_set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  elt_sizeb_ = value;
+}
+inline void FramePacket::set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_elt_sizeb(value);
+  // @@protoc_insertion_point(field_set:packet.FramePacket.elt_sizeb)
 }
 
 #ifdef __GNUC__
