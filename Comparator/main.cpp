@@ -31,7 +31,7 @@ using packet::FramePacket;
 
 void *handleEthernet(void *threadid);
 void *handleComparison(void *threadid);
-void ReadXBytes(int socket, unsigned int x, void* buffer);
+bool ReadXBytes(int socket, unsigned int x, void* buffer);
 
 std::mutex mtx, mtx2;
 std::queue<std::string> q;
@@ -66,20 +66,22 @@ int main(int argc, char * argv[]) {
                 recvMsgSize = sock->recv(buf, BUF_LEN);
             } while (recvMsgSize > sizeof(int));
             int length = ((int * ) buf)[0];
-            char* buffer = 0;
+            cout <<"length: " << length <<endl;
+            char* buffer = NULL;
             buffer = new char[length];
-            ReadXBytes(sock->sockDesc, length, (void*)buffer); 
+            if(ReadXBytes(sock->sockDesc, length, (void*)buffer)){
 
-            // copy binary data to a string
-            for(int i = 0; i < length; i++)
-                dat += buffer[i];   
+                // copy binary data to a string
+                for(int i = 0; i < length; i++)
+                    dat += buffer[i];   
 
-            // push string into queue
-            mtx.lock();
-            q.push(dat);
-            mtx.unlock();
+                // push string into queue
+                mtx.lock();
+                q.push(dat);
+                mtx.unlock();
+                dat.clear();
+            }
             delete [] buffer;
-            dat.clear();
     } // while
 
     } catch (SocketException & e) {
@@ -91,7 +93,7 @@ int main(int argc, char * argv[]) {
 }
 
 
-void ReadXBytes(int socket, unsigned int x, void* buffer)
+bool ReadXBytes(int socket, unsigned int x, void* buffer)
 {
     int bytesRead = 0;
     int result;
@@ -100,12 +102,13 @@ void ReadXBytes(int socket, unsigned int x, void* buffer)
         result = read(socket, buffer + bytesRead, x - bytesRead);
         if (result < 1 )
         {
-            cout <<"error " <<endl;
+            cout << "socket error" <<endl; 
             while(1){}
         }
 
         bytesRead += result;
     }
+    return true;
 }
 
 
@@ -179,13 +182,12 @@ void *handleComparison(void *threadid)
 
                 // decompress the image
                 try{
-                cv::Mat frameA = imdecode(rawA, cv::IMREAD_COLOR);
-                cv::Mat frameB = imdecode(rawB, cv::IMREAD_COLOR);
-
-                cv::imshow("Normal", frameA);
-                cv::imshow("Corrupt", frameB);
-                cv::waitKey(1);
-                comparator.run(&frameA, &frameB);
+                    cv::Mat frameA = imdecode(rawA, cv::IMREAD_COLOR);
+                    cv::Mat frameB = imdecode(rawB, cv::IMREAD_COLOR);
+                    cv::imshow("Normal", frameA);
+                    cv::imshow("Corrupt", frameB);
+                    cv::waitKey(1);
+                    comparator.run(&frameA, &frameB);
                 }
                 catch(cv::Exception & e){
                     cout << "error decompressing the image" << endl;

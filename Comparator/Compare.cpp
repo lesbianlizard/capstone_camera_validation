@@ -6,7 +6,8 @@ Compare::Compare(){}
 void Compare::run(cv::Mat *frame, cv::Mat *dframe){
     if(!_isCorrupt(frame, dframe))
         return;
-    std::cout << "Corruption detected" << std::endl;
+        
+    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" <<std::endl;
     if(_isWhite(dframe)){
         std::cout << "All white detected" <<std::endl;
         std::cout << "image colors: "<< m_shade <<std::endl;
