@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<title>GUI</title>
+<head>
+    <h1>Welcome to GUI website!</h1>
+</head>
+<body>
+    <!-
+    Format (use .join(',') method on a dynamically constructed list object) to produce these commands
+    Freeze:   ['1', 't/f', 'dur(ms)']
+    White:    ['2', 't/f', 'dur(ms)', 'shade(0-255)']
+    Translate ['3', 't/f', 'dur(ms)', 'x_offset', 'y_offset']
+    ->
+    <h2>Please choose the variable to submit.</h2>
+        <p>Freeze<select id="FreezeNumber">
+            <option value="1">1</option>
+        </select>
+        <select id="FreezeCommand">
+            <option value="1">Enable</option>
+            <option value="0">Disable</option>
+        </select>
+        <input type="number" id="FTime" placeholder="input freeze time (ms)">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;" onclick="freeze()">
+        </p>
+        <br>
+        <p>Discoloration<select id="WhiteNumber">
+            <option value="2">2</option>
+        </select>
+        <select id="WhiteCommand">
+            <option value="1">Enable</option>
+            <option value="0">Disable</option>
+        </select>
+        <input type="number" id="WTime" placeholder="input white time (ms)">
+        <input type="number" id="shade" placeholder="input shade (0-255)">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;" onclick="discoloration()">
+        </p>
+        <br>
+        <p>Translate<select id="TranslateNumber">
+            <option value="3">3</option>
+        </select>
+        <select id="TranslateCommand">
+            <option value="1">Enable</option>
+            <option value="0">Disable</option>
+        </select>
+        <input type="number" id="TTime" placeholder="input Translate time (ms)">
+        <input type="number" id="x_offset" placeholder="input x_offset">
+        <input type="number" id="y_offset" placeholder="input y_offset">
+        <input type="submit" value="submit" id="submit" style="color:green; border-radius:60px;" onclick="tx()">
+        </p>
+        <p>Hostname
+        <input type="string" id="hostname" placeholder="hostname:port">
+        </p>
+
+<script src="bundle.js"></script>
+
+        <script src="gui.js"></script>
+</html>
