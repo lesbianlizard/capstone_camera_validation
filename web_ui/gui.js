@@ -48,5 +48,25 @@ function translate()
   var y_offset = document.getElementById("y_offset").value
   command = type_sel + "," + TranslateCommand + "," + TTime + "," + x_offset + "," + y_offset
   console.log("Sending command " + command)
+  if (x_offset > 0)
+  {
+    console.log("shift direction horiz: 10")
+  }
+  else
+  {
+    console.log("shift direction horiz: 11")
+  }
+
+  if (y_offset > 0)
+  {
+    console.log("shift direction vert: 12")
+  }
+  else
+  {
+    console.log("shift direction vert: 13")
+  }
+
+  console.log("percentange shifted on x: "  + Math.round(x_offset/640.0 * 100))
+  console.log("percentange shifted on x: " +  Math.round(y_offset/480.0 * 100))
   sendStuff(command)
 }
