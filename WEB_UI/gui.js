@@ -48,6 +48,7 @@ function translate()
   var y_offset = document.getElementById("y_offset").value
   command = type_sel + "," + TranslateCommand + "," + TTime + "," + x_offset + "," + y_offset
   console.log("Sending command " + command)
+
   if (x_offset > 0)
   {
     console.log("shift direction horiz: 10")

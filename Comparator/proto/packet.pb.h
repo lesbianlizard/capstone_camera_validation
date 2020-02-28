@@ -385,6 +385,26 @@ inline void FramePacket::set_elt_sizea(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:packet.FramePacket.elt_sizea)
 }
 
+// int32 elt_sizeb = 7;
+inline void FramePacket::clear_elt_sizeb() {
+  elt_sizeb_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_elt_sizeb() const {
+  return elt_sizeb_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::elt_sizeb() const {
+  // @@protoc_insertion_point(field_get:packet.FramePacket.elt_sizeb)
+  return _internal_elt_sizeb();
+}
+inline void FramePacket::_internal_set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  elt_sizeb_ = value;
+}
+inline void FramePacket::set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_elt_sizeb(value);
+  // @@protoc_insertion_point(field_set:packet.FramePacket.elt_sizeb)
+}
+
 // int32 rowsb = 8;
 inline void FramePacket::clear_rowsb() {
   rowsb_ = 0;
@@ -543,26 +563,6 @@ inline void FramePacket::set_allocated_mat_datab(std::string* mat_datab) {
   }
   mat_datab_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), mat_datab);
   // @@protoc_insertion_point(field_set_allocated:packet.FramePacket.mat_dataB)
-}
-
-// int32 elt_sizeb = 7;
-inline void FramePacket::clear_elt_sizeb() {
-  elt_sizeb_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::_internal_elt_sizeb() const {
-  return elt_sizeb_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 FramePacket::elt_sizeb() const {
-  // @@protoc_insertion_point(field_get:packet.FramePacket.elt_sizeb)
-  return _internal_elt_sizeb();
-}
-inline void FramePacket::_internal_set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  elt_sizeb_ = value;
-}
-inline void FramePacket::set_elt_sizeb(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_elt_sizeb(value);
-  // @@protoc_insertion_point(field_set:packet.FramePacket.elt_sizeb)
 }
 
 #ifdef __GNUC__

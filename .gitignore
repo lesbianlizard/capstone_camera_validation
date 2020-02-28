@@ -1,0 +1,6 @@
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+node_modules
+**/corrupt
+**/compare

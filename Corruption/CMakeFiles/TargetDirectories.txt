@@ -1,3 +1,0 @@
-/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles/rebuild_cache.dir
-/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles/corrupt.dir
-/home/pi/Code/capstone_camera_validation/Corruption/CMakeFiles/edit_cache.dir

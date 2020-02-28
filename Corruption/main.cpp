@@ -42,23 +42,14 @@ void *handleIPC(void *threadid);
 void *handleEthernet(void *threadid);
 void dispatch(std::vector<std::string> cmd);
 
-// uint8_t im_flag = 0;
-// SocketMatTransmissionClient socketMat;
-// std::mutex mtxEth;
-// std::condition_variable flag;
-// std::queue<cv::Mat*> myqueue;
-
 int main(int argc, char * argv[]) {
     if ((argc < 3) || (argc > 3)) { // Test for correct number of arguments
         cerr << "Usage: " << argv[0] << " <Server> <Server Port>\n";
         exit(1);
     }
 
-
-
     std::string servAddress = argv[1]; // First arg: server address
-    unsigned short servPort = Socket::resolveService(argv[2], "tcp");
-    std::vector <uchar> compImg;         
+    TCPSocket sock(servAddress, atoi(argv[2]));
 
     type = SHIFT;
     std::string window = "corrupt";
@@ -68,8 +59,6 @@ int main(int argc, char * argv[]) {
     White white(50, 255, FRAME_HEIGHT, FRAME_WIDTH); 
     Translate translate(50, FRAME_HEIGHT, FRAME_WIDTH, 15, 15); 
     Compare comparator;
-
-    cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
     
     dis[0] = &freeze;
     dis[1] = &white;
@@ -77,18 +66,16 @@ int main(int argc, char * argv[]) {
 
     // spawn the IPC socket thread
     pthread_t ipcHandler;
-    pthread_t ethernetHandler;
+    // pthread_t ethernetHandler;
     pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
     // pthread_create(&ethernetHandler, NULL, handleEthernet, (void *)2); 
 
     try {
-        UDPSocket sock;
         int jpegqual =  ENCODE_QUALITY; // Compression Parameter
 
-        cv::Mat frame, dup;
-        cv::Mat cp1, cp2;
+        cv::Mat frame, dup, cp1, cp2; 
+
         cv::VideoCapture cap(0); // Grab the camera
-        cv::namedWindow(window, cv::WINDOW_AUTOSIZE);
         if (!cap.isOpened()) {
             cerr << "OpenCV Failed to open camera";
             exit(1);
@@ -107,69 +94,38 @@ int main(int argc, char * argv[]) {
             //resize(*dframe, cp1, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
             //resize(dup, cp2, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
 
-
-            // ends work performed by this thread, push readied frame packet to queue for ethernet thread
-
+            // compress the frames
+            std::vector <uchar> compImgA, compImgB;   
             std::vector <int> compression_params;
             compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
             compression_params.push_back(jpegqual);
-            cv::imencode(".jpg", dup, compImg, compression_params);
-            cv::imencode(".jpg", *dframe, compImg, compression_params);
+            cv::imencode(".jpg", dup, compImgA, compression_params);
+            cv::imencode(".jpg", *dframe, compImgB, compression_params);
 
+            // init the packet
+            FramePacket packet;
+            std::string serial_dat;
+            packet.set_rows(dup.rows);
+            packet.set_cols(dup.cols);
+            packet.set_rowsb(dframe->rows);
+            packet.set_colsb(dframe->cols);
+            packet.set_elt_type(dframe->type());
+            packet.set_elt_sizea(compImgA.size());
+            packet.set_elt_sizeb(compImgB.size());
+            packet.set_mat_dataa(compImgA.data(), compImgA.size());
+            packet.set_mat_datab(compImgB.data(), compImgB.size());
 
-std::string dat; 
-cv::Mat raw; 
-FramePacket packet;
+            // serialize the packet 
+            if (!packet.SerializeToString(&serial_dat))
+                std::cout<< "failed to serialize data" <<std::endl;
 
-// set the trivial fields
-packet.set_rows(dframe->rows);
-packet.set_cols(dframe->cols);
-packet.set_elt_type(dframe->type());
-packet.set_elt_size(compImg.size());
-
-// set the matrix's raw data
-packet.set_mat_dataa(compImg.data(), compImg.size());
-
-  if (packet.SerializeToString(&dat)) {
-      if(packet.ParseFromString(dat)){
-          
-
-        //allocate the matrix
-        raw.create(packet.rows(), packet.cols(), packet.elt_type());
-
-
-        //set the matrix's data
-        std::copy(reinterpret_cast<unsigned char *>(
-            const_cast<char *>(packet.mat_dataa().data())),
-            reinterpret_cast<unsigned char *>(
-            const_cast<char *>(packet.mat_dataa().data()) + packet.elt_size()),
-            raw.data);
-
-        // decompress the image
-        cv::Mat frame = imdecode(raw, cv::IMREAD_COLOR);
-        cv::imshow(window, frame);
-      }
-  }
-
-
-
-
-
-
-            int total_pack = 1 + (compImg.size() - 1) / PACK_SIZE;
+            int total_pack = 1 + (serial_dat.size()- 1) / PACK_SIZE;
             int ibuf[1];
-            ibuf[0] = total_pack;
-            sock.sendTo(ibuf , sizeof(int), servAddress, servPort);
+            ibuf[0] = serial_dat.size();
+            std::cout << "sending " << serial_dat.size() << std::endl; 
+            sock.send(ibuf , sizeof(int));
             for (int i = 0; i < total_pack; i++)
-                sock.sendTo( & compImg[i * PACK_SIZE], PACK_SIZE, servAddress, servPort);
-
-        cv::waitKey(FRAME_INTERVAL);
-            /*
-            cv::imshow(window2, dup);
-            cv::imshow(window, *dframe);
-            
-            comparator.run(&dup, dframe);
-            */
+                sock.send( & serial_dat[i * PACK_SIZE], PACK_SIZE);
         }
 
     }catch (SocketException & e) {
@@ -307,4 +263,44 @@ packet.set_mat_dataa(dframe->data, dataSize);
 
       }
   }
+
+
+
+
+
+
+std::string dat; 
+cv::Mat raw; 
+FramePacket packet;
+
+// set the trivial fields
+packet.set_rows(dframe->rows);
+packet.set_cols(dframe->cols);
+packet.set_elt_type(dframe->type());
+packet.set_elt_size(compImg.size());
+
+// set the matrix's raw data
+packet.set_mat_dataa(compImg.data(), compImg.size());
+
+  if (packet.SerializeToString(&dat)) {
+      if(packet.ParseFromString(dat)){
+          
+
+        //allocate the matrix
+        raw.create(packet.rows(), packet.cols(), packet.elt_type());
+
+
+        //set the matrix's data
+        std::copy(reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data())),
+            reinterpret_cast<unsigned char *>(
+            const_cast<char *>(packet.mat_dataa().data()) + packet.elt_size()),
+            raw.data);
+
+        // decompress the image
+        cv::Mat frame = imdecode(raw, cv::IMREAD_COLOR);
+        cv::imshow(window, frame);
+      }
+  }
+
 */

@@ -48,11 +48,11 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_packet_2eproto::offsets[] PROT
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, cols_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_type_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_sizea_),
+  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_sizeb_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, rowsb_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, colsb_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_dataa_),
   PROTOBUF_FIELD_OFFSET(::packet::FramePacket, mat_datab_),
-  PROTOBUF_FIELD_OFFSET(::packet::FramePacket, elt_sizeb_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::packet::FramePacket)},
@@ -65,9 +65,9 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_packet_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\014packet.proto\022\006packet\"\245\001\n\013FramePacket\022\014"
   "\n\004rows\030\001 \001(\005\022\014\n\004cols\030\002 \001(\005\022\020\n\010elt_type\030\003"
-  " \001(\005\022\021\n\telt_sizea\030\004 \001(\005\022\r\n\005rowsb\030\010 \001(\005\022\r"
-  "\n\005colsb\030\t \001(\005\022\021\n\tmat_dataA\030\005 \001(\014\022\021\n\tmat_"
-  "dataB\030\006 \001(\014\022\021\n\telt_sizeb\030\007 \001(\005b\006proto3"
+  " \001(\005\022\021\n\telt_sizea\030\004 \001(\005\022\021\n\telt_sizeb\030\007 \001"
+  "(\005\022\r\n\005rowsb\030\010 \001(\005\022\r\n\005colsb\030\t \001(\005\022\021\n\tmat_"
+  "dataA\030\005 \001(\014\022\021\n\tmat_dataB\030\006 \001(\014b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_packet_2eproto_deps[1] = {
 };
