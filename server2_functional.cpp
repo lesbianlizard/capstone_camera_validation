@@ -735,12 +735,7 @@ int socket_setup2(uint16_t port){
 
 
 
-struct rx_frame{
-	int socket;
-	Mat *img_buffer;
-	int img_buffer_size;
-	int *id_buffer;
-};
+
 
 int socket_setup3(uint16_t port){
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -807,36 +802,77 @@ int socket_setup2(){
 	return sock;
 }
 
+struct rx_frame{
+	int socket;
+	Mat img_buffer;
+	int img_buffer_size;
+	//int *id_buffer;
+};
 
 // function for receiving frames
 //void receive_frame(int socket,  Mat *img_buffer, int img_buffer_size, int *id_buffer){
-void *receive_frame(void *args){
+void *receive_frame(void * args){
 	struct rx_frame *rx_frame1 = (rx_frame*)args;
 
 	int socket = rx_frame1->socket;
-	Mat *img_buffer = rx_frame1->img_buffer;
+	Mat img_buffer2 = rx_frame1->img_buffer;
 	int img_buffer_size = rx_frame1->img_buffer_size;
-	int *id_buffer = rx_frame1->id_buffer;
+	//int *id_buffer = rx_frame1->id_buffer;
 	
 	int buffer1[4] = {0};
 	int buffer_size = 0;
 	int id = 9999;
-	vector	<uchar> buffer;
-	for(int i = 0; i < img_buffer_size-1; i++){
-		img_buffer[i] = img_buffer[i+1];
-		id_buffer[i] = id_buffer[i+1];
-	}
+	vector<uchar> buffer;
+	//for(int i = 0; i < img_buffer_size-1; i++){
+	//	//img_buffer[i] = img_buffer[i+1];
+	//	id_buffer[i] = id_buffer[i+1];
+	//}
 	recv(socket, &buffer1, 4, MSG_WAITALL);
 	buffer_size = buffer1[0];
 	buffer.resize(buffer_size);	
 	recv(socket, buffer.data(), buffer_size, MSG_WAITALL);
-
-	img_buffer[img_buffer_size - 1] = imdecode(buffer, 1);
+	//img_buffer[img_buffer_size - 1] = imdecode(buffer, 1);
+	img_buffer2 = imdecode(buffer, 1);
 	recv(socket, &id, sizeof(id), MSG_WAITALL);
-	id_buffer[img_buffer_size - 1] = id;
-
+	//id_buffer[img_buffer_size - 1] = id;
+	
+	rx_frame1->img_buffer = img_buffer2;
+	//rx_frame1->id_buffer = id_buffer;
+	//rx_frame1->img_buffer_size = img_buffer_size;
 
 }
+
+void *receive_frame2(void * args){
+	struct rx_frame *rx_frame1 = (rx_frame*)args;
+
+	int socket = rx_frame1->socket;
+	Mat img_buffer2 = rx_frame1->img_buffer;
+	int img_buffer_size = rx_frame1->img_buffer_size;
+	//int *id_buffer = rx_frame1->id_buffer;
+	
+	int buffer1[4] = {0};
+	int buffer_size = 0;
+	int id = 9999;
+	vector<uchar> buffer;
+	//for(int i = 0; i < img_buffer_size-1; i++){
+	//	//img_buffer[i] = img_buffer[i+1];
+	//	id_buffer[i] = id_buffer[i+1];
+	//}
+	recv(socket, &buffer1, 4, MSG_WAITALL);
+	buffer_size = buffer1[0];
+	buffer.resize(buffer_size);	
+	recv(socket, buffer.data(), buffer_size, MSG_WAITALL);
+	//img_buffer[img_buffer_size - 1] = imdecode(buffer, 1);
+	img_buffer2 = imdecode(buffer, 1);
+	recv(socket, &id, sizeof(id), MSG_WAITALL);
+	//id_buffer[img_buffer_size - 1] = id;
+	
+	rx_frame1->img_buffer = img_buffer2;
+	//rx_frame1->id_buffer = id_buffer;
+	//rx_frame1->img_buffer_size = img_buffer_size;
+
+}
+
 
 /*
 double fps_calc2(int &frame_num, int &socket, SocketMatTransmissionServer &socketMat, ofstream &myfile){
@@ -952,14 +988,14 @@ int main()
 	//}
 	int original_receive_socket = socket_setup(PORT1);
 	cout << "Connection 1 done" << endl;
-	int corrupt_receive_socket = socket_setup(PORT2);
+	int corrupt_receive_socket = socket_setup(PORT1);
 	cout << "Connection 2 done" << endl;
 	
-	usleep (1000000);
-	//original_receive_socket = socket_setup(PORT1);
-	//cout << "Connection 1 done" << endl;
-	corrupt_receive_socket = socket_setup(PORT2);
-	cout << "Connection 2 done" << endl;
+//	usleep (1000000);
+//	//original_receive_socket = socket_setup(PORT1);
+//	//cout << "Connection 1 done" << endl;
+//	corrupt_receive_socket = socket_setup(PORT2);
+//	cout << "Connection 2 done" << endl;
 	// create socket for original frame transmission
 	//cout << "here" << endl;
 	ofstream myfile;
@@ -976,12 +1012,13 @@ int main()
 	cv::Mat image2; // corrupted image
 	cv::Mat prev_img; // previous image for freeze comparison
 	int img_buffer_size = 10;
-	int* id_buffer = new int [img_buffer_size];
-	Mat* img_buffer = new Mat [img_buffer_size];
-	
+	//int* id_buffer = new int [img_buffer_size];
+	//Mat* img_buffer = new Mat [img_buffer_size];
+	Mat img_buffer;
 	int img_buffer_size2 = 10;
-	int*id_buffer2 = new int [img_buffer_size2];
-	Mat* img_buffer2 = new Mat [img_buffer_size2]; 
+	//int*id_buffer2 = new int [img_buffer_size2];
+	//Mat* img_buffer2 = new Mat [img_buffer_size2]; 
+	Mat img_buffer2;
 	static auto start = chrono::high_resolution_clock::now();
 	float times[60];
 	int index = 0;
@@ -992,14 +1029,18 @@ int main()
 	struct freeze_comp_args* fca = new freeze_comp_args;
 	struct shift_comp_args* sca = new shift_comp_args;
 	struct color_comp_args* cca = new color_comp_args;
-	struct rx_frame* split1 = new rx_frame;
-	struct rx_frame* split2 = new rx_frame; 
+	struct rx_frame *split1 = new rx_frame;
+	struct rx_frame *split2 = new rx_frame; 
 	pthread_t color;
 	pthread_t shift;
 	pthread_t freeze;
 	pthread_t rx_split1;
 	pthread_t rx_split2; 
-    
+	image2 = imread("test.jps",  CV_LOAD_IMAGE_COLOR);
+	//for(int i = 0; i < img_buffer_size; i++){
+	//	split1->img_buffer[i] = image2;
+	//	split2->img_buffer[i] = image2;
+	//}
 
 	while (1)
 	{
@@ -1010,35 +1051,39 @@ int main()
 		if(it==1){ // make sure one iteration has ran before setting previous image
 			prev_img = image2;
 		}
-		
+		cout << "HERE1 " << endl;
 		split1->socket=original_receive_socket;
 		split1->img_buffer = img_buffer;
 		split1->img_buffer_size = img_buffer_size;
-		split1->id_buffer = id_buffer; 
-		pthread_create(&rx_split1, NULL, receive_frame, (void*)split1); 
+		//split1->id_buffer = id_buffer; 
+		//pthread_create(&rx_split1, NULL, receive_frame, (void*)split1); 
 		//receive_frame(original_receive_socket, img_buffer, img_buffer_size, id_buffer); // receive original image
 		//image = img_buffer[img_buffer_size - 1]; // set Mat type to that image
+		cout << "Here2 " << endl;
 		split2->socket=corrupt_receive_socket;
 		split2->img_buffer = img_buffer2;
 		split2->img_buffer_size = img_buffer_size2;
-		split2->id_buffer = id_buffer2; 
-		pthread_create(&rx_split2, NULL, receive_frame, (void*)split2);
-		pthread_join(rx_split1, NULL);
-		pthread_join(rx_split2, NULL);
+		//split2->id_buffer = id_buffer2; 
+		cout << "Here 2.1 " << endl;
+		//pthread_create(&rx_split2, NULL, receive_frame, (void*)split2);
+		receive_frame((void*)split1);
+		receive_frame2((void*)split2);
+		cout << "Here 2.2 "<< endl;
+		//pthread_join(rx_split1, NULL);
+		cout << "Here 2.2.1 " << endl;
+		//pthread_join(rx_split2, NULL);
 		cout << "here3" << endl;
 		//receive_frame(corrupt_receive_socket, img_buffer2, img_buffer_size2, id_buffer2);
-		image = img_buffer[img_buffer_size-1];
-		image2 = img_buffer2[img_buffer_size2 - 1];
-		//image2 = image; 
-		//if(socketMat.receive(image2) > 0) // receive corrupted image
-		//{
-			//cv::imshow("Corrupted",image2);
-			//cv::imwrite("test.jpg",image2);
-			//cv::waitKey(1);
-			
-		//}
-		//cout << "here" << endl;
-		//image2 = image;
+		//image = split1->img_buffer[img_buffer_size-1];
+		img_buffer = split1->img_buffer;
+		//img_buffer_size = split1->img_buffer_size;
+		//id_buffer = split1->id_buffer;
+		image = img_buffer;
+		img_buffer2 = split2->img_buffer; 
+		//img_buffer_size2 = split2->img_buffer_size;
+		//id_buffer2 = split2->id_buffer;
+		image2 = img_buffer2;
+		
 		//image = image2;
 		it++;
 
@@ -1149,12 +1194,12 @@ int main()
 	    delete sca;
 	    delete fca;
 	    delete cca;
-	    delete split1; 
-	    delete split2;
-	    delete[] id_buffer;
-	    delete[] img_buffer;
-	    delete[] id_buffer2;
-	    delete[] img_buffer2;
+	    //delete split1; 
+	    //delete split2;
+	    //delete[] id_buffer;
+	    //delete[] img_buffer;
+	    //delete[] id_buffer2;
+	    //delete[] img_buffer2;
 	    myfile.close();
 	    //socketMat.socketDisconnect();
 	    close(original_receive_socket);
