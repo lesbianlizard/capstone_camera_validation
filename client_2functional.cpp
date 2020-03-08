@@ -1,25 +1,3 @@
-//
-//  client2.cpp
-//  img_proc_feb6
-//
-//  Created by ATW2 on 2/6/20.
-//  Copyright © 2020 ATW2. All rights reserved.
-//
-
-
-/*M///////////////////////////////////////////////////////////////////////////////////////
- //
- //  基于OpenCV和Socket的图像传输（发送）
- //
- //    By 彭曾 , at CUST, 2016.08.07
- //
- //    website: www.pengz0807.com  email: pengz0807@163.com
- //
- //M*/
-
-#ifndef __SOCKETMATTRANSMISSIONCLIENT_H__
-#define __SOCKETMATTRANSMISSIONCLIENT_H__
-
 #include "opencv2/opencv.hpp"
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,19 +12,22 @@
 #include <iostream>
 #include <fstream>
 #include <vector> 
+#include <pthread.h>  
+#include <zmq.hpp> 
 
 using namespace cv;
 using namespace std;
 
-//待传输图像默认大小为 640*480，可修改
-#define IMG_WIDTH 640    // 需传输图像的宽
-#define IMG_HEIGHT 480    // 需传输图像的高
-#define PACKAGE_NUM 2
-#define PORT2 8080
-#define MB 2591 * 1944
 
-//默认格式为CV_8UC3
+#define IMG_WIDTH 640
+#define IMG_HEIGHT 480
+#define PACKAGE_NUM 2
+#define PORT1 8079
+#define PORT2 8081
+#define MB (2591 * 1944) / 5
 #define BUFFER_SIZE IMG_WIDTH*IMG_HEIGHT*3/PACKAGE_NUM
+
+std::vector<std::string> cmd; // vector of strings from the GUI
 
 struct sentbuf
 {
@@ -54,163 +35,27 @@ struct sentbuf
     int flag;
 };
 
-class SocketMatTransmissionClient
-{
-public:
-    SocketMatTransmissionClient(void);
-    ~SocketMatTransmissionClient(void);
-    
-private:
-    int sockClient;
-    struct sentbuf data;
-    
-public:
-    
-    // 打开socket连接
-    // params :    IP        服务器的ip地址
-    //            PORT    传输端口
-    // return : -1        连接失败
-    //            1        连接成功
-    int socketConnect(const char* IP, int PORT);
-    
-    
-    // 传输图像
-    // params : image 待传输图像
-    // return : -1        传输失败
-    //            1        传输成功
-    int transmit(cv::Mat image);
-    
-    
-    // 断开socket连接
-    void socketDisconnect(void);
-};
-
-#endif
-
-
-/*M///////////////////////////////////////////////////////////////////////////////////////
- //
- //  基于OpenCV和Socket的图像传输（发送）
- //
- //    By 彭曾 , at CUST, 2016.08.07
- //
- //    website: www.pengz0807.com  email: pengz0807@163.com
- //
- //M*/
-
-
-//#include "SocketMatTransmissionClient.h"
-
-SocketMatTransmissionClient::SocketMatTransmissionClient(void)
-{
-}
-
-
-SocketMatTransmissionClient::~SocketMatTransmissionClient(void)
-{
-}
-
-
-int SocketMatTransmissionClient::socketConnect(const char* IP, int PORT)
-{
-    struct sockaddr_in    servaddr;
-    
-    if ((sockClient = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        printf("create socket error: %s(errno: %d)\n", strerror(errno), errno);
-        return -1;
-    }
-    
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
-    if (inet_pton(AF_INET, IP, &servaddr.sin_addr) <= 0)
-    {
-        printf("inet_pton error for %s\n", IP);
-        return -1;
-    }
-    
-    if (connect(sockClient, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
-    {
-        printf("connect error: %s(errno: %d)\n", strerror(errno), errno);
-        return -1;
-    }
-    else
-    {
-        printf("connect successful!\n");
-        return 0;
-    }
-}
-
-
-void SocketMatTransmissionClient::socketDisconnect(void)
-{
-    close(sockClient);
-}
-
-int SocketMatTransmissionClient::transmit(cv::Mat image)
-{
-    if (image.empty())
-    {
-        printf("empty image\n\n");
-        return -1;
-    }
-    
-    if(image.cols != 640 || image.rows != 480 || image.type() != CV_8UC3)
-    {
-        printf("the image must satisfy : cols == IMG_WIDTH（%d）  rows == IMG_HEIGHT（%d） type == CV_8UC3\n\n", IMG_WIDTH, IMG_HEIGHT);
-        return -1;
-    }
-    
-    for(int k = 0; k < PACKAGE_NUM; k++)
-    {
-        int num1 = IMG_HEIGHT / PACKAGE_NUM * k;
-        for (int i = 0; i < IMG_HEIGHT / PACKAGE_NUM; i++)
-        {
-            int num2 = i * IMG_WIDTH * 3;
-            uchar* ucdata = image.ptr<uchar>(i + num1);
-            for (int j = 0; j < IMG_WIDTH * 3; j++)
-            {
-                data.buf[num2 + j] = ucdata[j];
-            }
-        }
-        
-        if(k == PACKAGE_NUM - 1)
-            data.flag = 2;
-        else
-            data.flag = 1;
-        
-        if (send(sockClient, (char *)(&data), sizeof(data), 0) < 0)
-        {
-            printf("send image error: %s(errno: %d)\n", strerror(errno), errno);
-            return -1;
-        }
-    }
-    return 0;
-}
-
-
-Mat translateImg(Mat& img, int offsetx, int offsety) {
+Mat translateImg(Mat& img, int offsetx, int offsety) { // function used to translate image
     Mat trans_mat = (Mat_<double>(2, 3) << 1, 0, offsetx, 0, 1, offsety);
     warpAffine(img, img, trans_mat, img.size());
     return img;
 }
 
 
-Mat shift_up(Mat img_corr, int percentage){
-    cout << "Indicator 1: shift " << endl;
+Mat shift_up(Mat img_corr, int percentage){ // call this function to shift up (user percentage not pixels)
+    cout << endl <<  "Indicator 1: shift " << endl;
     cout << "Shift indicator: 12 - UP" << endl;
     cout << "Percentage shift indicator: " << percentage << endl;
     float up_percent = (percentage / 100.0)*480;
     up_percent = round(up_percent);
     cout << "Shifted UP by: " << up_percent << " = " << percentage << "%" << endl;
     //cvtColor(orig, img_corr, 0);
-    translateImg(img_corr, 0, -up_percent);
+    translateImg(img_corr, 0, -up_percent); // calls translate function
     return img_corr;
 } // shift up
 
 Mat shift_left(Mat img_corr, int percentage){
-    cout << "Indicator 1: shift " << endl;
+    cout << endl << "Indicator 1: shift " << endl;
     cout << "Shift indicator: 11 - LEFT" << endl;
     cout << "Percentage shift indicator: " << percentage << endl;
     float left_percent = (percentage / 100.0)*640.0;
@@ -222,7 +67,7 @@ Mat shift_left(Mat img_corr, int percentage){
 } // shift left
 
 Mat shift_right(Mat img_corr, int percentage){
-    cout << "Indicator 1: shift " << endl;
+    cout << endl << "Indicator 1: shift " << endl;
     cout << "Shift indicator: 10 - RIGHT" << endl;
     cout << "Percentage shift indicator: " << percentage << endl;
     float right_percent = (percentage / 100.0)*640.0;
@@ -235,7 +80,7 @@ Mat shift_right(Mat img_corr, int percentage){
 } // shift right
 
 Mat shift_down(Mat img_corr, int percentage){
-    cout << "Indicator 1: shift " << endl;
+    cout << endl << "Indicator 1: shift " << endl;
     cout << "Shift indicator: 13 - DOWN" << endl;
     cout << "Percentage shift indicator: " << percentage << endl;
     float down_percent = (percentage / 100.0)*480.0;
@@ -270,9 +115,21 @@ Mat discolor_white(){
     return img_corr;
 } // discolor white
 
+struct split_args
+{
+  Mat camera_frame;
+  int frame_id;
+  int socket;  
+};
 
-
-void split(Mat camera_frame, Mat corruption_frame, int frame_id, int socket){
+// splits camera signal (original away from corruption) gorilla
+//void split(Mat camera_frame, Mat corruption_frame, int frame_id, int socket){
+void* split(void* args){
+    struct split_args *args_in = (struct split_args*)args;
+    Mat camera_frame = args_in->camera_frame;
+    int frame_id = args_in->frame_id;
+    int socket = args_in->socket;
+    
 	int buffer_for_size[1] = {0};
 	vector <uchar> buffer;
 	buffer.resize(MB);
@@ -284,257 +141,320 @@ void split(Mat camera_frame, Mat corruption_frame, int frame_id, int socket){
 	size_t l = buffer_size;
 	send(socket, buffer.data(), l, 0);
 	send(socket, &frame_id, sizeof(frame_id), 0);
+    
+    return NULL;
 }
 
-
-void freeze(Mat prev_frame, int freeze_num, int socket, SocketMatTransmissionClient &socketMat, VideoCapture &vid){
-    cout << "Indicator 2: Freeze" << endl;
-    //cout << "Freeze Entered: press a # 2-9" << endl;
-    freeze_num = freeze_num*8;
-    int k = 0;
-    Mat frame;
-    int frame_id = 0; 
-    for(int i = 0; i < freeze_num; i++){
-        vid >> frame;
-        frame_id++;
-        imshow("corruption2", prev_frame);
-        socketMat.transmit(prev_frame);
-        imshow("corruption", frame);
-        split(frame, prev_frame, frame_id, socket);
-        //socketMat.transmit(frame);
-        
-        if((i%8) == 0){
-            k++;
-            cout << k << " seconds" << endl;
-        }
-    }//for loop
-} // freeze
-
-void fps_calc(VideoCapture &vid){
-    int j = 0;
-    Mat frame;
-    auto start = chrono::steady_clock::now();
-    while(j < 30){
-        vid>>frame;
-        j++;
-    }
-    auto end = chrono::steady_clock::now();
-    auto time1 = chrono::duration_cast<chrono::milliseconds>(end-start).count();
-    cout << "Time "  << time1 << endl;
-    float time2 = time1/1000.0;
-    cout << "Frame rate: " << 30/time2 << endl;
-} // fps
-
-
-int socket_setup(){
+int socket_setup(uint16_t portnum){
 	int opt = 1;
 
-	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	int sockfd = socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
 	if(sockfd == -1){
-		printf("error in socket()\n");
+		printf("error in socket(): %s\n", strerror(errno));
 	}
 
 	if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){
-		printf("error in setsockopt()\n");
+		printf("error in setsockopt(): %s\n", strerror(errno));
 	}
 
 	struct sockaddr_in address;
 	int addrlen = sizeof(address);
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(PORT2);
+	address.sin_port = htons(portnum);
 	int bind1 = bind(sockfd, (struct sockaddr*)&address, addrlen);
 	if(bind1 < 0){
-		printf("error in bind\n");
+		printf("error in bind: %s\n", strerror(errno));
 	}
 
 	int listen1 = listen(sockfd, 3);
+    if(listen1 < 0){
+		printf("error in listen1: %s\n", strerror(errno));
+	}
 
 	int new_socket = accept(sockfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
 	return new_socket;
 	
 }
 
+//IPC handler
+/**
+ * Kamron Ebrahimi - 2020
+ * **/
+void *handleIPC(void *threadid)
+{
+    //  Prepare our context and socket
+    zmq::context_t context (1);
+    zmq::socket_t socket (context, ZMQ_REP);
+    socket.bind ("tcp://*:5555");
+    while (true) {
+        zmq::message_t request;
+        //  Wait for next request from client
+        socket.recv (&request);
 
+        // process the data input
+        std::string cmd_str = std::string(static_cast<char*>(request.data()), request.size());
+        //std::cout<< cmd_str <<std::endl;
+        std::stringstream ss(cmd_str);
+        //std::vector<std::string> cmd;
+        while(ss.good())
+        {   
+            std::string substr;
+            getline( ss, substr, ',' );
+            cmd.push_back( substr );
+        }
+    
+        for(unsigned int i=0; i < cmd.size(); i++)
+            std::cout << "i: " << i << " " << cmd.at(i) << ' ';
 
-//#include "SocketMatTransmissionClient.h"
+        // lock the mutex and update the filter
+     
+        //  Send reply back to client
+        zmq::message_t reply (3);
+        memcpy (reply.data (), "ACK", 3);
+        socket.send (reply);
+    }
+}
 
 int main()
 {
-    SocketMatTransmissionClient socketMat;
-    if (socketMat.socketConnect("192.168.1.123", 6666) < 0)
+    // Create sockets for image transmission
+    int socket1 = socket_setup(PORT1);
+    if (errno != 0)
     {
-        return 0;
+        printf("socket1 connection error: %s\n", strerror(errno));
     }
-    int socket = socket_setup();
-    int height = 480;
-    int width = 640;
+    printf("Done setting up socket 1\n");
+    usleep(1000000);
+    printf("Beginning setup socket 2\n");
+    int socket2 = socket_setup(PORT2);
+    if (errno != 0)
+    {
+        printf("socket2 connection error: %s\n", strerror(errno));
+    }
+    
+    printf("Done setting up socket 2\n");
+
+    pthread_t ipcHandler;
+    pthread_t thread_send_orig;
+    pthread_t thread_send_corrupt;
+    pthread_create(&ipcHandler, NULL, handleIPC, (void *)1); 
+    
+    struct split_args args_send_orig;
+    struct split_args args_send_corrupt;
+
+    int height = 480; // defines height of image
+    int width = 640; // defines width of image
     int frame_num = 0;
     int frame_id = 0;
+    //int frame_id2 = 0;
     ofstream myfile;
-    myfile.open("corr_log.txt");
+    myfile.open("corr_log.txt"); // log of corruption done
     
-    cv::VideoCapture capture(0);
-    capture.set(CAP_PROP_FRAME_WIDTH, width);
-    capture.set(CAP_PROP_FRAME_HEIGHT, height);
-    capture.set(CAP_PROP_FPS,70);
+    cv::VideoCapture capture; // video capture object
+    capture.open(0);
+    //VideoCapture *cap2 = &capture;
+    capture.set(CAP_PROP_FRAME_WIDTH, width); // set width
+    capture.set(CAP_PROP_FRAME_HEIGHT, height); // set height
+    capture.set(CAP_PROP_FPS,60); // set FPS of corruption system
     
-    cv::Mat image;
-    cv::Mat prev_frame;
-    cv::Mat img_corr;
+    cv::Mat image; // original frame
+    cv::Mat prev_frame; // previous frame for freeze
+    cv::Mat img_corr; // corrupted frame
     
-    int percentage = 0;
-            int k = 0;
-            while(k == 0){
-                cout << "Enter Shift percentage 2-25% " << endl;
-                cin >> percentage;
-                if(percentage >=2 || percentage <= 25){
-                    k = 1;
-                }
-            }
-            k=0;
-            int frz_time = 0;
-            while(k == 0){
-                cout << "Enter freeze time " << endl;
-                cin >> frz_time;
-                if(frz_time >=2 || frz_time <=9){
-                    k = 1;
-                }
-            }
+    capture >> image;
+    //int percentage = 5;
+     //int frz_time = 5; 
+    //cout << "frame num: " << frame_num << endl;
+    frame_num = 0;
+    //global_str = "5";
+    cmd.push_back("5"); // set an original value for the function
+    cmd.push_back("4");
+    int corr_type = 0;
+    int enable = 0;
+    int ui_corr_type = 0;
+    int ui_corr_type_prev = 0;
+    //int freeze_counter = 0;
+    int freeze_target = 0;
+    int freeze_check = 0;
     
     while (1)
     {
-        frame_num++;
-        frame_id++;
+        frame_num++; // incrememnet frame num each loop
+        frame_id++; // increment frame_id each loop
         myfile << frame_num << ": ";
-        if (!capture.isOpened())
+        if (!capture.isOpened()) // if video capture object fails, leave program
             return 0;
+            
+        prev_frame = image;// set previous frame to current frame
+        capture >> image; // capture frame 
         
-        capture >> image;
-        prev_frame = image;
-        img_corr = image;
-        char c=(char)waitKey(25);
-        if(c==27){ // press 'esc' to quit
-            myfile << "EXIT" << endl;
-            break;
+        // Show frame number on screen
+        putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+        
+        args_send_orig.camera_frame = image;
+        args_send_orig.frame_id = frame_id;
+        args_send_orig.socket = socket1;
+        
+        pthread_create(&thread_send_orig, NULL, split, &args_send_orig);
+        
+        // receiving data from web GUI
+        ui_corr_type_prev = ui_corr_type;
+        ui_corr_type = stoi(cmd[0], nullptr);
+        
+        if (ui_corr_type != ui_corr_type_prev)
+        {
+            corr_type = ui_corr_type;
         }
         
-        else if(c=='f'){ // press 'f' to freeze
-            myfile << "freeze" << endl;
-            /*
-            int num = 0;
-            int k = 0;
-            while(k == 0){
-                cout << "HOW LONG FREEZE: 2-9 seconds: " << endl;
-                cin >> num;
-                if(num >=2 || num <= 9){
-                    k = 1;
+        enable = stoi(cmd[1], nullptr);
+
+        //cout << "CMD[0] " << val << endl;
+        // if freeze indicator
+        if(corr_type == 1)
+        {  
+            if(enable == 1)
+            {
+                if (freeze_check == 0)
+                {
+                    freeze_target = frame_num + stoi(cmd[2], nullptr);
+                    freeze_check++;
+                    img_corr = image;
                 }
+                
+                if (frame_num == freeze_target)
+                {
+                    corr_type = 0;
+                    freeze_check = 0;
+                }
+                
+                myfile << frame_num << ": freeze" << endl;
+                //freeze(prev_frame, val, socket1, socket2,  capture, frame_num, frame_id, myfile);
+              
             }
-            */
-            freeze(prev_frame, frz_time, socket,socketMat,  capture);
-        }// freeze
-        
-        else if(c == 'w'){ // shift up
-            myfile << "shift up: " << percentage << endl;
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            img_corr = shift_up(img_corr, percentage);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
-            
-            //socketMat.transmit(image);
-            
-        } // shift up
-        
-        else if(c == 's'){ // shift down
-            myfile << "shift down: " << percentage << endl;
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            img_corr = shift_down(img_corr, percentage);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
-            //socketMat.transmit(image);
-          
-        } // shift down
-        
-        else if(c == 'd'){ // shift right
-            myfile << "shift right: " << percentage << endl;
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            img_corr = shift_right(img_corr, percentage);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
-           
-            
-           
-            
-            //socketMat.transmit(image);
-            
-        } // shift right
-        
-        else if(c == 'a'){ // shift left
-            myfile << "shift left: " << percentage << endl;
-            imshow("corruption", image);
-            split(image, image, frame_id, socket);
-            img_corr = shift_left(img_corr, percentage);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
-            
-             
-            //socketMat.transmit(image);
-            
-        } // shift left
-        
-        else if(c =='r'){
-            myfile << "red" << endl;
-            img_corr = discolor_red();
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            //socketMat.transmit(image);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
+            else{
+                img_corr = image; // set corrupted image as original if no corruption
+
+                //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+                //imshow("Corr: Original", image);
+                //split(image, img_corr, frame_id, socket);
+                    //socketMat.transmit(image);
+                //imshow("corruption2", image);
+                //socketMat.transmit(img_corr);
+            }
         }
-        else if(c=='b'){
-            myfile << "blue" << endl;
-            img_corr = discolor_blue();
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            //socketMat.transmit(image);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
+        
+        // if discoloration indicator 
+        else if(corr_type == 2){
+            
+            if(enable == 1){
+                myfile << frame_num << ": white" << endl;
+                img_corr = discolor_white();
+                //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+                //imshow("Corr: Original", image);
+                //split(image, img_corr, frame_id, socket);
+                ////imshow("corruption2", img_corr);
+                //socketMat.transmit(img_corr);
+            }
+            else{
+                  img_corr = image; // set corrupted image as original if no corruption
+
+                //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+                //imshow("Corr: Original", image);
+                //split(image, img_corr, frame_id, socket);
+                    ////socketMat.transmit(image);
+                ////imshow("corruption2", image);
+                //socketMat.transmit(img_corr);
+            }
         }
-        else if(c=='g'){
-            myfile << "green" << endl;
-            img_corr = discolor_green();
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            //socketMat.transmit(image);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
+        
+        // if shift indicator 
+        else if(corr_type == 3){
+            
+            if(enable == 1){
+                int offx = stoi(cmd[3], nullptr);
+                int offy = stoi(cmd[4], nullptr);
+                //split(image, image, frame_id, socket);
+                //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+                //imshow("Corr: Original", image);
+                if(offx > 0){ // shift right
+                    float percentagex = (offx/640.0)*100.0;
+                    myfile << frame_num << ": shift right: " << percentagex << "%"<< endl;
+                    Mat image2 = image; 
+                    img_corr = shift_right(image, percentagex);
+              
+                }
+                else if(offx < 0){ // shift left
+                    float percentagex = (-offx/640.0)*100.0;
+                    myfile << frame_num << ": shift left: " << percentagex << "%"<< endl;
+                    Mat image2 = image;
+                    img_corr = shift_left(image, percentagex);
+                  
+                }
+                if(offy > 0){ // shift down
+                    float percentagey = (offy/480.0)*100.0;
+                    myfile << frame_num << ": shift down: " << percentagey << "%"<< endl;
+                    Mat image2 = image;
+                    img_corr = shift_down(image, percentagey);
+                   
+                }
+                else if(offy < 0){ // shift up
+                    float percentagey = (-offy/480.0)*100.0;
+                    myfile << frame_num << ": shift up: " << percentagey << "%"<< endl;
+                    Mat image2 = image; 
+                    //imshow("Corr: Original", image2);
+                    //split(image2, image2, frame_id, socket);
+                    img_corr = shift_up(image, percentagey);
+
+                }
+                //imshow("corruption2", img_corr);
+                //socketMat.transmit(img_corr);
+               
+            }
+            else{
+                //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+                img_corr = image; // set corrupted image as original if no corruption
+
+                //imshow("Corr: Original", image);
+                //split(image, img_corr, frame_id, socket);
+                    //socketMat.transmit(image);
+                //imshow("corruption2", image);
+                //socketMat.transmit(img_corr);
+            }
         }
-        else if(c=='h'){
-            myfile << "white" << endl;
-            img_corr = discolor_white();
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            //socketMat.transmit(image);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
+        else {
+            myfile << frame_num << ": original" << endl;
+            img_corr = image; // set corrupted image as original if no corruption
+            //putText(image, to_string(frame_num), Point(550, 50), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0,0,0), 4, 8, false); 
+            //imshow("Corr: Original", image);
+                                                                                                                  ////cout << "here" << endl;
+            //split(image, img_corr, frame_id, socket);
+            ////socketMat.transmit(image);
+            //imshow("corruption2", img_corr);
+            //socketMat.transmit(img_corr);
+            //pthread_create(&thread_send_socketmat, NULL, socketMat.transmit, &img_corr); 
+            //cout << "data size" << image.total()*image.elemSize() << endl;
         }
-        else{
-            if (image.empty())
-                return 0;
-            myfile << "original" << endl;
-            imshow("corruption", image);
-            split(image, img_corr, frame_id, socket);
-            //socketMat.transmit(image);
-            imshow("corruption2", img_corr);
-            socketMat.transmit(img_corr);
-        }
-       
+        
+        imshow("Original Image", image);
+        imshow("Corrupted Image", img_corr);
+        cv::waitKey(1);
+        
+        args_send_corrupt.camera_frame = img_corr;
+        args_send_corrupt.frame_id = frame_id;
+        args_send_corrupt.socket = socket2;
+        
+        pthread_create(&thread_send_corrupt, NULL, split, &args_send_corrupt);
+        pthread_join(thread_send_corrupt, NULL);
+        pthread_join(thread_send_orig, NULL);
+    
+        cmd.clear(); // clear string vector from GUI
+        
     } // while
-    myfile.close();
-    socketMat.socketDisconnect();
+    
+    myfile.close(); // close file
+    //socketMat.socketDisconnect(); // disconnect socket
+    close(socket1);
+    close(socket2);
     return 0;
 } // main
