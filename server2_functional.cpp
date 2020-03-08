@@ -22,18 +22,20 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <fstream>
-#define PORT_ORIGINAL_VIDEO 8080
-using namespace cv;
-using namespace std;
+#include <chrono>
+#include <pthread.h>
 
+#define PORT1 8079
+#define PORT2 8080 // port used for original frames
 #define PACKAGE_NUM 2
-
 #define IMG_WIDTH 640
 #define IMG_HEIGHT 480
 #define width 640
 #define height 480
-
 #define BLOCKSIZE IMG_WIDTH*IMG_HEIGHT*3/PACKAGE_NUM
+
+using namespace cv;
+using namespace std;
 
 struct recvBuf
 {
@@ -41,7 +43,7 @@ struct recvBuf
     int flag;
 };
 
-
+//server creation 
 class SocketMatTransmissionServer
 {
 public:
@@ -145,8 +147,14 @@ void SocketMatTransmissionServer::socketDisconnect(void)
     close(sockConn);
 }
 
-int SocketMatTransmissionServer::receive(cv::Mat& image)
+//struct serv_trans{
+//	Mat &image;
+//};
+
+int SocketMatTransmissionServer::receive(Mat& image)
 {
+    //struct serv_trans* serv = (struct serv_trans*)args;
+    //cv::Mat& image = 
     int returnflag = 0;
     cv::Mat img(IMG_HEIGHT, IMG_WIDTH, CV_8UC3, cv::Scalar(0));
     needRecv = sizeof(recvBuf);
@@ -205,8 +213,27 @@ int SocketMatTransmissionServer::receive(cv::Mat& image)
 
 //#include "SocketMatTransmissionServer.h"
 
+// comparison module for shifts 
 
-void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
+struct shift_comp_args{
+    
+	Mat orig_img;
+	Mat corr_img;
+	int frame_num;
+	//ofstream &myfile;
+	int ret;
+    };
+
+//int shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
+void* shift_comp(void* args){
+    
+    struct shift_comp_args* sca = (shift_comp_args*)args;
+    Mat orig_img = sca->orig_img;
+    Mat corr_img = sca->corr_img;
+    int frame_num = sca->frame_num;
+    //ofstream myfile = sca->myfile;
+    
+        
     int p = 0;
     int cnt2 = 0;
     int cnt3 = 0;
@@ -224,10 +251,14 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     int cnt_u1 = 0;
     int cnt_u2 = 0;
     float pixel_u = 0;
+    int cnt_out = 0;
     for(int i = 0; i < 120; i++){
         if(cnt_u1 >= 600){
             cnt_u2++    ;
         }
+	   if(cnt_out > 10){
+		break;
+	    }
         cnt_u1 = 0;
         for(int j = 0; j < orig_img.cols; j++){ // 480
             bgrPixel = corr_img.at<Vec3b>(i,j);
@@ -238,6 +269,11 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
                 }
             }
             else{
+		    cnt_out++;
+		    if(cnt_out > 10){
+			//return 0; 
+			break;
+		    }
                 //cnt3 = 1;
             }
         } // inner for loop
@@ -249,16 +285,22 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     if(percent_u >= 1){
         cout << "COMP: SHIFTED DOWN " << pixel_u << " pixels ";
         cout << "and " << percent_u << "%" << endl;
-        myfile << frame_num << ": COMP SHIFTED DOWN " << percent_u << endl;
-        return;
+       // myfile << frame_num << ": COMP SHIFTED DOWN " << percent_u << endl;
+	sca->ret = 1;
+	return 0;
+        //return 1;
     }
     
     //check shift up ***************************
     cnt2 = 0;
     cnt3 = 0;
+    cnt_out = 0;
     for(int i = 360; i < orig_img.rows; i++){ // 640
         if(cnt3 >= 600){
             cnt2++;
+        }
+       if(cnt_out > 10){
+	   break;
         }
         cnt3 = 0;
         for(int j = 0; j < orig_img.cols; j++){ // 480
@@ -270,6 +312,11 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
                 }
             }
             else{
+		    cnt_out++;
+		    if(cnt_out > 10){
+			//return 0;
+			break;
+		    }
             }
         } // inner for loop
     } // outer for loop
@@ -280,9 +327,10 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     if(percent_d >= 1){
         cout << "COMP: SHIFTED UP " << cnt2;
         cout << " and " << percent_d << "%" << endl;
-        myfile << frame_num << ": COMP SHIFTED UP " << percent_d << endl;
-
-        return;
+        //myfile << frame_num << ": COMP SHIFTED UP " << percent_d << endl;
+	sca->ret = 1;
+	return 0;
+        //return 1;
     }
     
     // shift left check**************************************
@@ -291,12 +339,16 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     int cnt_l = 0;
     int check = 0;
     int cntl2 = 0;
+    cnt_out = 0; 
     //for(int i =0; i < orig_img.rows; i++){
     for(int i = 480; i < orig_img.cols; i++){  
         //cout << "cnt_l " << cnt_l << endl;
         if(cnt_l > 100){
          cntl2++;   
-        }
+        }	
+        if(cnt_out > 10){
+		break;
+	 }
         /*
         if(cnt5 == cnt_l){
             cnt4 = 0;
@@ -322,6 +374,13 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
                     cnt_l++;
                 }
             }
+	    else{
+		    cnt_out++;
+		    if(cnt_out > 10){
+			//return 0;
+			break;
+		    }
+	   }
         }// inner for loop
     } // outer for loop
     if(check > 10){
@@ -336,21 +395,26 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     if(percent_l >= 2){
         cout << "COMP: SHIFTED LEFT " << cntl2  ;
         cout << " and " << percent_l << "%" << endl;
-        myfile << frame_num << ": COMP SHIFTED left " << percent_l << endl;
-
-        return;
+        //myfile << frame_num << ": COMP SHIFTED left " << percent_l << endl;
+ 	sca->ret = 1;
+	return 0;
+        //return 1;
     }
     
     //shift right check****************************
     int cnt6 = 0;
     int cnt7 = 0;
     int cnt_r = 0;
+    cnt_out = 0; 
     for(int i =0; i < 161; i++){
         //cout << "CNT 6" << cnt6 << endl;
         if(cnt6 >= 100){
             //cnt_r = cnt6 + cnt_r;
             cnt_r++;
         }
+        if(cnt_out > 10){
+		break;
+	 }
         cnt6 = 0;
         for(int j = 0; j < orig_img.rows; j++){
             bgrPixel = corr_img.at<Vec3b>(j,i);
@@ -360,6 +424,13 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
                     cnt6++;
                 }
             }
+	    else{
+		    cnt_out++;
+		    if(cnt_out > 10){
+			//return 0;
+			break;
+		    }
+	    }
         } // inner for loop
     } // outer for loop
     float pixel_r = cnt_r/640.0;
@@ -370,126 +441,308 @@ void shift_comp(Mat orig_img, Mat corr_img, int frame_num, ofstream &myfile){
     if(percent_r >= 1){
         cout << "COMP: SHIFTED RIGHT " << cnt_r;
         cout << " and " << percent_r << "%" << endl;
-        myfile << frame_num << ": COMP SHIFTED RIGHT " << percent_r << endl;
-        return;
+       // myfile << frame_num << ": COMP SHIFTED RIGHT " << percent_r << endl;
+	sca->ret = 1;
+	return 0; 
+        //return 1;
     }
-    cout << "no shift detected" << endl;
-    myfile << frame_num << ": no shift " << endl;
+    	sca->ret = 0;
+	return 0;
+    //return 0;
+    //cout << "no shift detected" << endl;
+    //myfile << frame_num << ": no shift " << endl;
 } // shift comp
 
 
-void color_comp(Mat corr_img, int frame_num, ofstream &myfile){
+
+
+// color comparison module
+int color_comp2(Mat corr_img, int frame_num, ofstream &myfile){
     //int height = 480;
     //int width = 640;
-    Mat red(height, width, CV_8UC3, Scalar(0,0,255));
-    Mat blue(height, width, CV_8UC3, Scalar(255,0,0));
-    Mat green(height, width, CV_8UC3, Scalar(0,255,0));
-    Mat white(height, width, CV_8UC3, Scalar(255,255,255));
-    
+    Mat red(height, width, CV_8UC3, Scalar(0,0,255)); // red Mat object
+    Mat blue(height, width, CV_8UC3, Scalar(255,0,0)); // blue Mat object
+    Mat green(height, width, CV_8UC3, Scalar(0,255,0)); // green Mat object
+    Mat white(height, width, CV_8UC3, Scalar(255,255,255)); // white Mat Object
+    Mat black(height, width, CV_8UC3, Scalar(0,0,0)); // Black Mat object
+    int ret = 0;
     int cntw = 0;
     int cntb = 0;
     int cntg = 0;
     int cntr = 0;
+    int cntblk = 0;
     int n = 0;
-    Vec3b white_o = white.at<Vec3b>(0,0);
+    Vec3b white_o = white.at<Vec3b>(0,0); // pixel values of each color at (0,0) point of pixel array
     Vec3b red_o = red.at<Vec3b>(0,0);
     Vec3b blue_o = blue.at<Vec3b>(0,0);
     Vec3b green_o = green.at<Vec3b>(0,0);
     Vec3b corr_o = corr_img.at<Vec3b>(0,0);
+        return 1;
+    //}
+    return 0;
+    //cout << "no shift detected" << endl;
+    myfile << frame_num << ": no shift " << endl;
+} // shift comp
+
+struct color_comp_args{
+    Mat corr_img;
+    int frame_num;
+    //ofstream myfile;
+    int ret;
+    };
+
+// shift comparison module
+//int color_comp(Mat corr_img, int frame_num, ofstream &myfile){
+void* color_comp(void* args){
     
-    for(int i =0; i < 630; i++){
-        for(int j = 0; j < 470; j++){
-            corr_o = corr_img.at<Vec3b>(j,i);
-            if(white_o == corr_o){
-                cntw++;
-            }
-            else if(red_o == corr_o){
-                cntr++;
-            }
-            else if(blue_o == corr_o){
-                cntb++;
-            }
-            else if(green_o == corr_o){
-                cntg++;
-            }
-            else{
-                n = 0;
-            }
-            
-        } // inner for loop
+    struct color_comp_args* cca = (color_comp_args*)args;
+    Mat corr_img = cca->corr_img;
+    int frame_num = cca->frame_num;
+   // ofstream myfile  = cca->myfile;
+    
+    //int height = 480;
+    //int width = 640;
+    Mat red(height, width, CV_8UC3, Scalar(0,0,255)); // red Mat object
+    Mat blue(height, width, CV_8UC3, Scalar(255,0,0)); // blue Mat object
+    Mat green(height, width, CV_8UC3, Scalar(0,255,0)); // green Mat object
+    Mat white(height, width, CV_8UC3, Scalar(255,255,255)); // white Mat Object
+    Mat black(height, width, CV_8UC3, Scalar(0,0,0)); // Black Mat object
+    int ret = 0;
+    int cntw = 0;
+    int cntb = 0;
+    int cntg = 0;
+    int cntr = 0;
+    int cntblk = 0;
+    int n = 0;
+    Vec3b white_o = white.at<Vec3b>(0,0); // pixel values of each color at (0,0) point of pixel array
+    Vec3b red_o = red.at<Vec3b>(0,0);
+    Vec3b blue_o = blue.at<Vec3b>(0,0);
+    Vec3b green_o = green.at<Vec3b>(0,0);
+    Vec3b corr_o = corr_img.at<Vec3b>(0,0);
+    Vec3b black_o = black.at<Vec3b>(0,0);
+    for(int i =0; i < 640; i++){
+	    if( n > 50){
+		    cca->ret = 0;
+		    return 0;
+		    //return 0;
+	    }
+	    for(int j = 0; j < 480; j++){
+		    corr_o = corr_img.at<Vec3b>(j,i);
+		    if(white_o == corr_o){
+			    cntw++;
+		    }
+		    else if(red_o == corr_o){
+			    cntr++;
+		    }
+		    else if(blue_o == corr_o){
+			    cntb++;
+		    }
+		    else if(green_o == corr_o){
+			    cntg++;
+		    }
+		    else if(black_o == corr_o){
+			    cntblk++;
+		    }
+		    else{
+			    n++;
+		    }
+		    if( n > 10){
+			cca->ret = 0;
+			return 0;
+			//return 0;
+			    break;
+		    }
+	    } // inner for loop
     } // outer for loop
     if(cntw >= 296000){
-        cout << "WHITE SCREEN COMPARED" << endl;
-        myfile << frame_num << ": WHITE SCREEN COMPARED" << endl;
-        //break;
+	    cout << "WHITE SCREEN COMPARED" << endl;
+	   // myfile << frame_num << ": WHITE SCREEN COMPARED" << endl;
+	    cca->ret = 1;
+	    //ret = 1;
+	    //break;
+    }
+    else if(cntblk >= 296000){
+	    cout << "BLACK SCREEN COMPARED" << endl;
+	    //myfile << frame_num << ": WHITE SCREEN COMPARED" << endl;
+	    cca->ret = 1;
+	    //ret = 1;
     }
     else if(cntb >= 296000){
-        cout << "BLUE SCREEN COMPARED" << endl;
-         myfile << frame_num << ": BLUE SCREEN COMPARED" << endl;
-        //break;
+	    cout << "BLUE SCREEN COMPARED" << endl;
+	    //myfile << frame_num << ": BLUE SCREEN COMPARED" << endl;
+	    cca->ret = 1;	    
+	    //ret = 1; 
+	    //break;
     }
     else if(cntg >= 296000){
-        cout << "GREEN SCREEN COMPARED" << endl;
-         myfile << frame_num << ": GREEN SCREEN COMPARED" << endl;
-        //break;
+	    cout << "GREEN SCREEN COMPARED" << endl;
+	   // myfile << frame_num << ": GREEN SCREEN COMPARED" << endl;
+	    cca->ret = 1;	    
+	    //ret = 1;
+	    //break;
     }
     else if(cntr >= 296000){
-        cout << "RED SCREEN COMPARED" << endl;
-         myfile << frame_num << ": RED SCREEN COMPARED" << endl;
-        //break;
+	    cout << "RED SCREEN COMPARED" << endl;
+	    //myfile << frame_num << ": RED SCREEN COMPARED" << endl;
+	    cca->ret = 1;	    
+	    //ret = 1; 
+	    //break;
     }
     else{
-        cout << "no color detection " << endl;
-        myfile << frame_num << ": no color detection " << endl;
+	    //cout << "no color detection " << endl;
+	   // myfile << frame_num << ": no color detection " << endl;
+	    cca->ret = 0;	    
+	    //ret = 0;
     }
+    return 0;
+    //return ret;
 } // color comp
 
-int freeze_comp(Mat prev, Mat corr, int freeze_cnt, int frame_num, ofstream &myfile){
-    int frz_cnt = 0;
-    int frz_not = 0;
-    int frz_check = 0;
-    //cout << "here";
-    Vec3b x = corr.at<Vec3b>(0,0);
-    Vec3b y = prev.at<Vec3b>(0,0);
-    while(1){
-        for(int i =0; i < 480; i++){
-            for(int j = 0; j < 640; j++){ // 480
-                //cout << i << " " << j << endl;
-                x = corr.at<Vec3b>(i,j);
-                y = prev.at<Vec3b>(i,j);
-                if(x == y){
-                    frz_cnt++;
-                    //cout << "identical" << endl;
-                }
-                else{
-                    frz_not++;
-                    if(freeze_cnt > 0){
-                        float counter = freeze_cnt/8.0;
-                        int counter2 = round(counter);
-                        cout << "COMP: frozen for: " << counter << " secs" << endl;
-                        myfile << frame_num << ": COMP: frozen for: " << counter << " secs" << endl;
-                        freeze_cnt = 0;
-                        break;
-                    }
-                    else if(frz_not > 50){
-                        //cout << frame_num << ": " << "no freeeze " << endl;
-                        //myfile << frame_num << ": no freeze detected"  << endl;
-                        break;
-                    }
-                }
-            } // inner for loop
-        } // outer for loop
-        //cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!Freeze_cnt " << frz_cnt << endl;
-        if(frz_cnt >= 307000){
-            freeze_cnt++;
-            myfile << frame_num << ": COMP: frozen "  << endl;
-        }
-        break;
-    }// while
-    return freeze_cnt;
+struct freeze_comp_args{
+    Mat prev;
+    Mat corr;
+    int freeze_cnt;
+    int frame_num;
+    //ofstream myfile;
+    //static auto start;
+    int ret;
+    };
+
+//Module for freeze comparison 
+//int freeze_comp(Mat prev, Mat corr, int freeze_cnt, int frame_num, ofstream &myfile, auto &start){
+	
+void* freeze_comp(void* args){
+    
+	struct freeze_comp_args* fca = (freeze_comp_args*)args;
+	Mat prev = fca->prev;
+	Mat corr = fca->corr;
+	int freeze_cnt = fca->freeze_cnt;
+	int frame_num = fca->frame_num;
+	//ofstream myfile = fca->myfile;
+	//auto start = fca->start;
+    	
+	int frz_cnt = 0;
+	int frz_not = 0;
+	int frz_check = 0;
+	double count = 0;
+	double count1 = 0; 
+	//auto start = chrono::high_resolution_clock::now();
+	//auto end = chrono::high_resolution_clock::now();
+
+	//cout << "here";
+	Vec3b x = corr.at<Vec3b>(0,0);
+	Vec3b y = prev.at<Vec3b>(0,0);
+	//while(1){
+		for(int i =0; i < 480; i++){
+		    if(frz_not > 50){
+			break;
+		    }
+			for(int j = 0; j < 640; j++){ // 480
+				//cout << i << " " << j << endl;
+				x = corr.at<Vec3b>(i,j);
+				y = prev.at<Vec3b>(i,j);
+				if(x == y){
+					frz_cnt++;
+
+				}
+				else{
+					frz_not++;
+					if(frz_not > 10){
+						//cout << frame_num << ": " << "no freeeze " << endl;
+						//return 0;
+						break;
+					}
+					else if(freeze_cnt > 0){
+						//end = chrono::high_resolution_clock::now(); // end clock if no longer same frame
+						//count1 = chrono::duration_cast<chrono::nanoseconds>(end-start).count()+count;
+						count = count1 *= 1e-9;
+						count = round(count);
+						//float counter = freeze_cnt/8.0;
+						//int counter2 = round(counter);
+						if(count >=2){
+							cout << "COMP: frozen for: " << count << " secs" << endl;
+							//myfile << frame_num << ": COMP: frozen for: " << count << " secs" << endl;
+						}
+
+						freeze_cnt = 0;
+						fca->ret = 0;
+						return 0;
+						//return 0;
+						//break;
+					}
+					
+				}
+			} // inner for loop
+		} // outer for loop
+		cout << "Frz Count : " << frz_cnt << endl;
+		if(frz_cnt >= 20000){
+			//cout << "Froze" << endl;
+			//myfile << frame_num << ": COMP: frozen "  << endl;
+			if(freeze_cnt == 0){
+				//myfile << frame_num << ": COMP: frozen caught "  << endl;
+				//start = chrono::high_resolution_clock::now(); // start clock upon freeze
+			}
+			freeze_cnt++;
+		}
+		//break;
+	//}// while
+
+	if(freeze_cnt == 0){
+		//myfile << frame_num << ": no freeze detected"  << endl;
+	}
+	fca->ret = freeze_cnt;
+	return 0; 
+	//return freeze_cnt;
+} // end of freeze compare
+
+
+// setup socket for original frame transmission
+
+int socket_setup2(uint16_t port){
+	int opt = 1;
+
+	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sockfd == 0){
+		printf("error in socket()\n");
+	}
+
+	if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))){
+		printf("error in setsockopt()\n");
+	}
+
+	struct sockaddr_in address;
+	int addrlen = sizeof(address);
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons(port);
+	int bind1 = bind(sockfd, (struct sockaddr*)&address, addrlen);
+	if(bind1 < 0){
+		printf("error in bind\n");
+	}
+
+	int listen1 = listen(sockfd, 3);
+	if(listen1 < 0){
+		printf("errot in listen\n");
+	}
+
+	int new_socket = accept(sockfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+	if(new_socket < 0){
+		printf("Error in accept\n");
+	}
+	return new_socket;
+
 }
 
-int socket_setup(){
+
+
+struct rx_frame{
+	int socket;
+	Mat *img_buffer;
+	int img_buffer_size;
+	int *id_buffer;
+};
+
+int socket_setup3(uint16_t port){
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if(sock < 0){
 		cout << "error in socket()" << endl;
@@ -497,21 +750,74 @@ int socket_setup(){
 
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT_ORIGINAL_VIDEO);
-	int addrlen = sizeof(serv_addr);
+	serv_addr.sin_port = htons(port);
+	//int addrlen = sizeof(serv_addr);
+
+	if(inet_pton(AF_INET, "192.168.1.120", &serv_addr.sin_addr) <= 0){
+		cout << "error in inet_pton" << endl;
+	}
+
+	if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
+		cout << "error in connect: " << strerror(errno) << endl;
+	}
+	return sock;
+}
+int socket_setup(uint16_t port){
+	int sock = 0;
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+	if(sock < 0){
+		cout << "error in socket()" << endl;
+        return -1; 
+    }
+
+	struct sockaddr_in serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(port);
 	
+	if(inet_pton(AF_INET, "192.168.1.120", &serv_addr.sin_addr) <= 0){
+		printf("inet_pton error: %s\n", strerror(errno));
+        return -1; 
+    }
+
+	if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
+		cout << "error in connect: " << strerror(errno) << endl;
+        return -1;
+    }
+	return sock;
+}
+
+int socket_setup2(){
+	int sock = socket(AF_INET, SOCK_STREAM, 0);
+	if(sock < 0){
+		cout << "error in socket()" << endl;
+	}
+
+	struct sockaddr_in serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(PORT2);
+	int addrlen = sizeof(serv_addr);
+
 	if(inet_pton(AF_INET, "192.168.1.120", &serv_addr.sin_addr) <= 0){
 		cout << "error in inet_pton" << endl;
 	}
 
 	if(connect(sock, (struct sockaddr *)&serv_addr, addrlen) < 0){
-		cout << "error in connect" << endl;
+		cout << "error in connect: " << strerror(errno) << endl;
 	}
 	return sock;
 }
 
-void receive_frame(int socket,  Mat *img_buffer, int img_buffer_size, int *id_buffer){
 
+// function for receiving frames
+//void receive_frame(int socket,  Mat *img_buffer, int img_buffer_size, int *id_buffer){
+void *receive_frame(void *args){
+	struct rx_frame *rx_frame1 = (rx_frame*)args;
+
+	int socket = rx_frame1->socket;
+	Mat *img_buffer = rx_frame1->img_buffer;
+	int img_buffer_size = rx_frame1->img_buffer_size;
+	int *id_buffer = rx_frame1->id_buffer;
+	
 	int buffer1[4] = {0};
 	int buffer_size = 0;
 	int id = 9999;
@@ -532,77 +838,326 @@ void receive_frame(int socket,  Mat *img_buffer, int img_buffer_size, int *id_bu
 
 }
 
+/*
+double fps_calc2(int &frame_num, int &socket, SocketMatTransmissionServer &socketMat, ofstream &myfile){
+	int j = 0;
+	Mat image;
+	Mat image2;
+	double time2 = 0;
+	cout << "FPS calculating: " << endl;
+	int img_buffer_size = 10;
+	int* id_buffer = new int [img_buffer_size];
+	Mat* img_buffer = new Mat [img_buffer_size];
+	auto start = chrono::high_resolution_clock::now(); // start high res clock
+	while(j < 28){ // run 28 frames 
+		//myfile << frame_num << "original" << endl;
+		receive_frame(socket, img_buffer, img_buffer_size, id_buffer); // receive original image
+		image = img_buffer[img_buffer_size - 1]; // set Mat type to that image
+		if(socketMat.receive(image2) > 0) // receive corrupted image
+		{
+		}
+		//frame_id++;
+		frame_num++;
+		cout << ".";
+		j++;
+	}
+	auto end = chrono::high_resolution_clock::now(); // end high res clock
+	double time1 = chrono::duration_cast<chrono::nanoseconds>(end-start).count(); // calculates difference 
+	//cout << "Time "  << time1 << endl;
+	time1 *= 1e-9;
+	time2 = 28.0/time1;
+	cout << "Frame rate: " << time2 << endl;
+	return time2;
+}
+*/
+
+struct resolution {
+	int X;
+	int Y;
+};
+
+void output_ui(Mat& img, bool shift_detect, bool noise_detect, bool freeze_detect, float fps, int frame_num) {
+
+	//if (img.empty() || &img == NULL) {
+	if (img.empty()) {
+		cout << "Empty Image" << endl;
+		return;
+	}
+
+	Point warning = Point(50, 50);
+	//Point pt = Point(100, 200);
+	Scalar color = Scalar(0, 0, 255);
+	int thickness = 5;
+	int font_size = 2;
+	int font = FONT_HERSHEY_COMPLEX_SMALL;
+	int text_x = 50;
+	int text_y = 100;
+	int width1 = img.cols;
+	int height1 = img.rows;
+	//FPS1080:
+	//putText(img, "FPS:", Point(100, 980), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	//putText(img, to_string(fps), Point(210, 980), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+
+	//FPS720:
+	//putText(img, "FPS:", Point(100, 620), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	//putText(img, to_string(fps), Point(210, 620), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+
+	//FPS480:
+	putText(img, "FPS:", Point(50, 380), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	putText(img, to_string(fps), Point(160, 380), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+
+	//Resolution1080:
+	//putText(img, to_string(res.Y), Point(100, 1030), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	//putText(img, "x", Point(210, 1030), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	//putText(img, to_string(res.X), Point(240, 1030), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+
+	putText(img, to_string(width1), Point(50, 430), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	putText(img, "x", Point(130, 430), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	putText(img, to_string(height1), Point(160, 430), font, font_size, Scalar(0, 0, 0), thickness, 8, false);
+	putText(img, to_string(frame_num), Point(550,50), font, 1, Scalar(0,0,0), 4, 8, false); 
+	if (shift_detect || noise_detect || freeze_detect) {
+		putText(img, "Warning:", warning, font, font_size, color, thickness, 8, false);
+		//void rectangle(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int shift=0)
+		//rectangle(img, Point(0, 0), Point(1920, 1080), color, 20);
+		rectangle(img, Point(0, 0), Point(640, 480), color, 20);
+	}
+	else {
+		return;
+	}
+	if (shift_detect) {
+		putText(img, "Video Shift Detected", Point(text_x, text_y), font, font_size, color, thickness, 8, false);
+		//void arrowedLine(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int line_type=8, int shift=0, double tipLength=0.1)
+		//arrowedLine(img, Point(200, 500), Point(10, 500), color, thickness);
+		text_y = text_y + 50;
+	}
+	if (noise_detect) {
+		putText(img, "Discolor Detected", Point(text_x, text_y), font, font_size, color, thickness, 8, false);
+		text_y = text_y + 50;
+	}
+	if (freeze_detect) {
+		putText(img, "Video Frozen", Point(text_x, text_y), font, font_size, color, thickness, 8, false);
+		text_y = text_y + 50;
+	}
+
+} // end output UI
+
 int main()
 {
-    SocketMatTransmissionServer socketMat;
-    if (socketMat.socketConnect(6666) < 0)
-    {
-        return 0;
-    }
-    ofstream myfile;
-    myfile.open("comp_log.txt");
-    int it = 0;
-    int freeze_num = 0;
-    int frame_num = 2;
-    cv::Mat image;
-    cv::Mat image2;
-    cv::Mat prev_img;
-    int original_receive_socket = socket_setup();
-    int img_buffer_size = 10;
-    int* id_buffer = new int [img_buffer_size];
+	// create socket for corru  pted frame transmission
+	// uses poer 6670
+	//SocketMatTransmissionServer socketMat;
+	//if (socketMat.socketConnect(6670) < 0)
+	//{
+	//	return 0;
+	//}
+	int original_receive_socket = socket_setup(PORT1);
+	cout << "Connection 1 done" << endl;
+	int corrupt_receive_socket = socket_setup(PORT2);
+	cout << "Connection 2 done" << endl;
+	
+	usleep (1000000);
+	//original_receive_socket = socket_setup(PORT1);
+	//cout << "Connection 1 done" << endl;
+	corrupt_receive_socket = socket_setup(PORT2);
+	cout << "Connection 2 done" << endl;
+	// create socket for original frame transmission
+	//cout << "here" << endl;
+	ofstream myfile;
+	myfile.open("comp_log.txt"); // output log for compared frames
+	int it = 0;
+	int loop1 = 0;
+	int loop2 = 0;
+	int loop3 = 0;
+	int freeze_num = 0;
+	int frame_num = 2;
+	int frame_id =2;
+	double fps_cal = 0.0;
+	cv::Mat image; // original image
+	cv::Mat image2; // corrupted image
+	cv::Mat prev_img; // previous image for freeze comparison
+	int img_buffer_size = 10;
+	int* id_buffer = new int [img_buffer_size];
 	Mat* img_buffer = new Mat [img_buffer_size];
-    namedWindow("Original", CV_WINDOW_AUTOSIZE);
-    while (1)
-    {
-        frame_num++;
-        //if((it%2)==0){
-       if(it==1){
-           prev_img = image2;
-        }
-            if(socketMat.receive(image2) > 0)
-            {
-                //cv::imshow("Corrupted",image2);
-                cv::imwrite("test.jpg",image2);
-                cv::waitKey(1);
-                it++;
-            }
-            receive_frame(original_receive_socket, img_buffer, img_buffer_size, id_buffer);
-            image = img_buffer[img_buffer_size - 1];
-            imshow("Original", image);
-            cv::imshow("Corrupted",image2);
+	
+	int img_buffer_size2 = 10;
+	int*id_buffer2 = new int [img_buffer_size2];
+	Mat* img_buffer2 = new Mat [img_buffer_size2]; 
+	static auto start = chrono::high_resolution_clock::now();
+	float times[60];
+	int index = 0;
+	float sum = 0;
+	float fps = 0;
+	float avg_fps = 30;
+	
+	struct freeze_comp_args* fca = new freeze_comp_args;
+	struct shift_comp_args* sca = new shift_comp_args;
+	struct color_comp_args* cca = new color_comp_args;
+	struct rx_frame* split1 = new rx_frame;
+	struct rx_frame* split2 = new rx_frame; 
+	pthread_t color;
+	pthread_t shift;
+	pthread_t freeze;
+	pthread_t rx_split1;
+	pthread_t rx_split2; 
+    
 
-        //} // if it % 2
-        
-        //else{
-            /*if(socketMat.receive(image2) > 0)
-            {
-                cv::imshow("comp 2",image2);
-                cv::imwrite("test.jpg",image2);
-                cv::waitKey(1);
-                it++;
-            }*/
-            
-           // it++;
-       //} // else
-        //cout << "here";
-        if(it > 1){
-            //cout <<"here2";
-            freeze_num = freeze_comp(prev_img, image2, freeze_num, frame_num, myfile);
-            color_comp(image2, frame_num, myfile);
-            shift_comp(image, image2, frame_num, myfile);
-            //cout << "HERE" << endl;
-            prev_img = image2;
-        }
-        
-        char c = (char)waitKey(1);
-		if(c == 27){
-			break;
+	while (1)
+	{
+		auto start_fps_avg = std::chrono::high_resolution_clock::now();
+
+		frame_num++;
+		//if((it%2)==0){
+		if(it==1){ // make sure one iteration has ran before setting previous image
+			prev_img = image2;
 		}
-    } // while
-    destroyWindow("Original");
-    delete[] id_buffer;
-    delete[] img_buffer;
-    myfile.close();
-    socketMat.socketDisconnect();
-    return 0;
-} // main
+		
+		split1->socket=original_receive_socket;
+		split1->img_buffer = img_buffer;
+		split1->img_buffer_size = img_buffer_size;
+		split1->id_buffer = id_buffer; 
+		pthread_create(&rx_split1, NULL, receive_frame, (void*)split1); 
+		//receive_frame(original_receive_socket, img_buffer, img_buffer_size, id_buffer); // receive original image
+		//image = img_buffer[img_buffer_size - 1]; // set Mat type to that image
+		split2->socket=corrupt_receive_socket;
+		split2->img_buffer = img_buffer2;
+		split2->img_buffer_size = img_buffer_size2;
+		split2->id_buffer = id_buffer2; 
+		pthread_create(&rx_split2, NULL, receive_frame, (void*)split2);
+		pthread_join(rx_split1, NULL);
+		pthread_join(rx_split2, NULL);
+		cout << "here3" << endl;
+		//receive_frame(corrupt_receive_socket, img_buffer2, img_buffer_size2, id_buffer2);
+		image = img_buffer[img_buffer_size-1];
+		image2 = img_buffer2[img_buffer_size2 - 1];
+		//image2 = image; 
+		//if(socketMat.receive(image2) > 0) // receive corrupted image
+		//{
+			//cv::imshow("Corrupted",image2);
+			//cv::imwrite("test.jpg",image2);
+			//cv::waitKey(1);
+			
+		//}
+		//cout << "here" << endl;
+		//image2 = image;
+		//image = image2;
+		it++;
+
+		cout << "here";
+		if(it > 1){
+			//cout <<"here2";
+			while(1){
+				
+				cca->corr_img = image2;
+				cca->frame_num = frame_num;
+				//cca->myfile = myfile;
+				cca->ret = 0;
+				
+				sca->orig_img = image;
+				sca->corr_img = image2;
+				sca->frame_num = frame_num;
+				//sca->myfile = myfile;
+				sca->ret = 0;
+				
+				fca->prev = prev_img;
+				fca->corr = image2;
+				fca->freeze_cnt = freeze_num;
+				fca->frame_num = frame_num;
+				//fca->myfile = myfile;
+				//fca->start = start;
+				fca->ret = 0;
+				
+				pthread_create(&color, NULL, color_comp, (void*)cca);
+				pthread_create(&shift, NULL, shift_comp, (void*)sca);
+				pthread_create(&freeze, NULL, freeze_comp, (void*)fca);
+				
+				pthread_join(color, NULL);
+				//pthread_join(shift, NULL);
+				//pthread_join(freeze, NULL);
+				
+				loop1 = cca->ret;
+				loop2 = sca->ret;
+				loop2 = fca->ret;
+				
+				//loop1 = color_comp(image2, frame_num, myfile); // check for discoloration 
+				if(loop1 ==1){ // if black do not run shift comparator because cannot shift a black screen
+					//cout << "cannot shift black screen" << endl;
+					break; 
+				}
+				//loop2 = shift_comp(image, image2, frame_num, myfile); // check for shift
+				if(loop2 == 1){
+					break;
+				}
+				//loop3 = freeze_num = freeze_comp(prev_img, image2, freeze_num, frame_num, myfile, start); // check for frozen
+				break; 
+			}
+			bool shift, noise, freeze; 
+			if(loop1 == 1){
+				noise = true; 
+			}
+			else if(loop2 == 1){
+				shift = true;
+			}
+			else if(loop3 > 0){
+				freeze = true; 
+			}
+			else if (loop3 == 0){
+				freeze = false;
+			}
+
+			output_ui(image, shift, noise, freeze, avg_fps, frame_num);
+			imshow("COMP: Original", image); // show both imagess
+			imshow("COMP: Corrupted",image2);
+			waitKey(1);
+			shift = false;
+			noise = false;
+			//freeze = false;
+			loop1 = 0;
+			loop2 = 0;
+			loop3 = 0;
+			//cout << "HERE" << endl;
+			prev_img = image2; // set previous image
+		}
+		cout << "FPS: " << avg_fps << endl; 
+		//char c = (char)waitKey(1);
+		//if(c == 27){
+		//	break;
+		//}
+		
+		//Calculated elapsed time:
+		auto elapsed = std::chrono::high_resolution_clock::now() - start_fps_avg;
+		//Convert to microseconds:
+		long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+		//Convert to seconds:
+		long double seconds = (long double)microseconds / 1e6;
+		sum = 0;
+		//cout << index << endl;
+		times[index] = seconds;
+		for (int j = 0; j <= index; j++) {
+			sum = sum + times[j];
+		}
+		avg_fps = 1/(sum / index);
+		if (index < 28) {
+			index++;
+		}
+		else {
+			for (int j = 0; j < 28; j++) {
+				times[j] = times[j + 1];
+			}
+		}
+		cout << "FPS: " << avg_fps << endl; 
+	    }
+	    delete sca;
+	    delete fca;
+	    delete cca;
+	    delete split1; 
+	    delete split2;
+	    delete[] id_buffer;
+	    delete[] img_buffer;
+	    delete[] id_buffer2;
+	    delete[] img_buffer2;
+	    myfile.close();
+	    //socketMat.socketDisconnect();
+	    close(original_receive_socket);
+	    close(corrupt_receive_socket);
+	    return 0;
+	} // main
