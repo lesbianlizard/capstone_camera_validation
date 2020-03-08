@@ -840,6 +840,7 @@ void *receive_frame(void * args){
 	rx_frame1->img_buffer = img_buffer2;
 	//rx_frame1->id_buffer = id_buffer;
 	//rx_frame1->img_buffer_size = img_buffer_size;
+
 }
 
 /*
