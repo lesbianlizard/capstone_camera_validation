@@ -129,24 +129,25 @@ void* split(void* args){
     Mat camera_frame = args_in->camera_frame;
     int frame_id = args_in->frame_id;
     int socket = args_in->socket;
-    
-	int buffer_for_size[1] = {0};
-	vector <uchar> buffer;
-	buffer.resize(MB);
-	imencode(".jpg", camera_frame, buffer);
-	int buffer_size = buffer.size();
-	buffer_for_size[0] = buffer_size;
-	send(socket, &buffer_for_size, sizeof(buffer_for_size), 0);
+    int buffer_for_size[1] = {0};
+    vector <uchar> buffer;
+    buffer.resize(MB);
+    imencode(".jpg", camera_frame, buffer);
+    int buffer_size = buffer.size();
+    buffer_for_size[0] = buffer_size;
+    send(socket, &buffer_for_size, sizeof(buffer_for_size), 0);
 
-	size_t l = buffer_size;
-	send(socket, buffer.data(), l, 0);
-	send(socket, &frame_id, sizeof(frame_id), 0);
+    size_t l = buffer_size;
+    send(socket, buffer.data(), l, 0);
+    send(socket, &frame_id, sizeof(frame_id), 0);
     
     return NULL;
 }
 
-int socket_setup(uint16_t portnum){
+std::vector<int> socket_setup(uint16_t portnum, int n_socks){
 	int opt = 1;
+	int socks_accepted = 0;
+	std::vector<int> socks;
 
 	int sockfd = socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
 	if(sockfd == -1){
@@ -167,14 +168,18 @@ int socket_setup(uint16_t portnum){
 		printf("error in bind: %s\n", strerror(errno));
 	}
 
-	int listen1 = listen(sockfd, 3);
-    if(listen1 < 0){
+	int listen1 = listen(sockfd, n_socks);
+	if(listen1 < 0){
 		printf("error in listen1: %s\n", strerror(errno));
 	}
 
-	int new_socket = accept(sockfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-	return new_socket;
-	
+	while (socks_accepted < n_socks)
+	{	
+		int new_socket = accept(sockfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+		socks.push_back(new_socket);
+		socks_accepted++;
+	}
+	return socks;
 }
 
 //IPC handler
@@ -218,22 +223,27 @@ void *handleIPC(void *threadid)
 
 int main()
 {
+    std::vector<int> socket_fds;
+    int n_sockets = 2;
     // Create sockets for image transmission
-    int socket1 = socket_setup(PORT1);
-    if (errno != 0)
-    {
-        printf("socket1 connection error: %s\n", strerror(errno));
-    }
-    printf("Done setting up socket 1\n");
-    usleep(1000000);
-    printf("Beginning setup socket 2\n");
-    int socket2 = socket_setup(PORT2);
-    if (errno != 0)
-    {
-        printf("socket2 connection error: %s\n", strerror(errno));
-    }
+    socket_fds = socket_setup(PORT1, n_sockets);
+    printf("Done setting up both sockets\n");
+
     
-    printf("Done setting up socket 2\n");
+//    int socket_fds.at(0) = socket_setup(PORT1);
+//    if (errno != 0)
+//    {
+//        printf("socket_fds.at(0) connection error: %s\n", strerror(errno));
+//    }
+//    printf("Done setting up socket 1\n");
+//
+//    printf("Beginning setup socket 2\n");
+//    int socket_fds.at(1) = socket_setup(PORT2);
+//    if (errno != 0)
+//    {
+//        printf("socket_fds.at(1) connection error: %s\n", strerror(errno));
+//    }
+    
 
     pthread_t ipcHandler;
     pthread_t thread_send_orig;
@@ -294,7 +304,7 @@ int main()
         
         args_send_orig.camera_frame = image;
         args_send_orig.frame_id = frame_id;
-        args_send_orig.socket = socket1;
+        args_send_orig.socket = socket_fds.at(0);
         
         pthread_create(&thread_send_orig, NULL, split, &args_send_orig);
         
@@ -329,7 +339,7 @@ int main()
                 }
                 
                 myfile << frame_num << ": freeze" << endl;
-                //freeze(prev_frame, val, socket1, socket2,  capture, frame_num, frame_id, myfile);
+                //freeze(prev_frame, val, socket_fds.at(0), socket_fds.at(1),  capture, frame_num, frame_id, myfile);
               
             }
             else{
@@ -442,7 +452,7 @@ int main()
         
         args_send_corrupt.camera_frame = img_corr;
         args_send_corrupt.frame_id = frame_id;
-        args_send_corrupt.socket = socket2;
+        args_send_corrupt.socket = socket_fds.at(1);
         
         pthread_create(&thread_send_corrupt, NULL, split, &args_send_corrupt);
         pthread_join(thread_send_corrupt, NULL);
@@ -454,7 +464,7 @@ int main()
     
     myfile.close(); // close file
     //socketMat.socketDisconnect(); // disconnect socket
-    close(socket1);
-    close(socket2);
+    close(socket_fds.at(0));
+    close(socket_fds.at(1));
     return 0;
 } // main
