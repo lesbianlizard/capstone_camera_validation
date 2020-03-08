@@ -815,7 +815,7 @@ void *receive_frame(void * args){
 	struct rx_frame *rx_frame1 = (rx_frame*)args;
 
 	int socket = rx_frame1->socket;
-	Mat img_buffer2 = rx_frame1->img_buffer;
+	Mat img_buffer1 = rx_frame1->img_buffer;
 	int img_buffer_size = rx_frame1->img_buffer_size;
 	//int *id_buffer = rx_frame1->id_buffer;
 	
@@ -832,22 +832,22 @@ void *receive_frame(void * args){
 	buffer.resize(buffer_size);	
 	recv(socket, buffer.data(), buffer_size, MSG_WAITALL);
 	//img_buffer[img_buffer_size - 1] = imdecode(buffer, 1);
-	img_buffer2 = imdecode(buffer, 1);
+	img_buffer1 = imdecode(buffer, 1);
 	recv(socket, &id, sizeof(id), MSG_WAITALL);
 	//id_buffer[img_buffer_size - 1] = id;
 	
-	rx_frame1->img_buffer = img_buffer2;
+	rx_frame1->img_buffer = img_buffer1;
 	//rx_frame1->id_buffer = id_buffer;
 	//rx_frame1->img_buffer_size = img_buffer_size;
 
 }
 
 void *receive_frame2(void * args){
-	struct rx_frame *rx_frame1 = (rx_frame*)args;
+	struct rx_frame *rx_frame2 = (rx_frame*)args;
 
-	int socket = rx_frame1->socket;
-	Mat img_buffer2 = rx_frame1->img_buffer;
-	int img_buffer_size = rx_frame1->img_buffer_size;
+	int socket = rx_frame2->socket;
+	Mat img_buffer2 = rx_frame2->img_buffer;
+	int img_buffer_size = rx_frame2->img_buffer_size;
 	//int *id_buffer = rx_frame1->id_buffer;
 	
 	int buffer1[4] = {0};
@@ -867,7 +867,7 @@ void *receive_frame2(void * args){
 	recv(socket, &id, sizeof(id), MSG_WAITALL);
 	//id_buffer[img_buffer_size - 1] = id;
 	
-	rx_frame1->img_buffer = img_buffer2;
+	rx_frame2->img_buffer = img_buffer2;
 	//rx_frame1->id_buffer = id_buffer;
 	//rx_frame1->img_buffer_size = img_buffer_size;
 
@@ -1036,7 +1036,7 @@ int main()
 	pthread_t freeze;
 	pthread_t rx_split1;
 	pthread_t rx_split2; 
-	image2 = imread("test.jps",  CV_LOAD_IMAGE_COLOR);
+	//image2 = imread("test.jps",  CV_LOAD_IMAGE_COLOR);
 	//for(int i = 0; i < img_buffer_size; i++){
 	//	split1->img_buffer[i] = image2;
 	//	split2->img_buffer[i] = image2;
